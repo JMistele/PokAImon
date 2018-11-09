@@ -96,7 +96,7 @@ Bot.prototype.login = function() {
 
 	client = this.client;
 	
-	loginname = this.ID;
+	loginname = this.nextID;
 	loginpass = this.password;
 	
 	//send POST request to login server
@@ -111,6 +111,7 @@ Bot.prototype.login = function() {
 
 		//upon receiving a message from server after POST req is sent, this function will run
 		function (err, response, body) {
+			console.log(body);
 			var data = util.safeJSON(body);
 			let _request = "|/trn " + loginname + ",0," + data.assertion; 
 			client.write(_request); //send assertion to server to confirm login
@@ -351,7 +352,6 @@ Bot.prototype.processMessage = function(message) {
 				}
 			}
 		}
-	}
 };
 
 module.exports.Bot = Bot;
