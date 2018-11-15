@@ -101,7 +101,7 @@ class InterfaceLayer {
 
         if (status == 'fnt') {
             pokemon.status = status.id;
-            pokemon.fainted = true; //THIS FUCKING LINE
+            pokemon.fainted = true; //THIS FUCKING LINE TODO
             pokemon.isActive = false;
             pokemon.isStarted = false;
             pokemon.side.pokemonLeft--;
@@ -293,26 +293,47 @@ class InterfaceLayer {
         var boringTags = ["", " ", "init", "title", "j", "gametype", "gen", "seed", "rated", "choice", "-supereffective", "-resisted", "-miss", "-immune", "-crit", "faint", "raw", 'fail', 'cant', '-hitcount', '-singleturn', '-activate', '-fail', '-singlemove', '-notarget'];
         var arr = line.split("|");
         var tag = arr[1];
+
         if (tag == "player") { // |player|p2|Ultimateruffles13|279
+            console.log(this.uname);
+            console.log('vs');
+            console.log(arr[3]);
             if (arr[3] == this.uname) { //['', 'player', 'p2', 'username', '279']
                 this.mySide = arr[2];
+                console.log('YEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAH');
                 this.mySID = parseInt(this.mySide.substring(1)) - 1; //basically 0 or 1
             }
         }
         else if (tag == 'tier') {
             this.format = arr[2];
         }
-
-        else if (tag == "request") { // |request|{"active":[{"moves":[{"move":"Night Slash","id":"nightslash","pp":24,"maxpp":24,"target":"normal","disabled":false},...
+        
+        else if (tag == "request" && arr[2] != undefined && arr[2] != '' && arr[2] != null) { // |request|{"active":[{"moves":[{"move":"Night Slash","id":"nightslash","pp":24,"maxpp":24,"target":"normal","disabled":false},...
             var requestData = JSON.parse(arr[2]); //this is basically bot's team
+
             if (!this.firstTurn) { //if first turn hasn't started
+                console.log('does it ever get set?')
+                console.log(this.mySide)
                 if (this.mySide == 'p1') {
+                    // TODO: SEE battle-engine.js line 5000
                 	//this is where bot's side is updated with a team
+                    console.log('Player team:');
+                    var team = this.convertTeamToSet(requestData['side']['pokemon']);
+                    console.log(team.length);
+                    for(var i = 0; i < team.length; i++){
+                        console.log(team[i]);
+                    }
                     this.battle.join(this.mySide, this.uname, this.mySID, this.convertTeamToSet(requestData['side']['pokemon']));
                     //this is wehre opponent's side joins
                     this.battle.join((this.mySide == 'p1' ? 'p2' : 'p1'), 'opponent', 1 - this.mySID, []);
                 }
                 else { //do same thing as above, just the opposite case
+                    console.log('Player team:');
+                    var team = this.convertTeamToSet(requestData['side']['pokemon']);
+                    console.log(team.length);
+                    for(var i = 0; i < team.length; i++){
+                        console.log(team[i]);
+                    }
                     this.battle.join((this.mySide == 'p1' ? 'p2' : 'p1'), 'opponent', 1 - this.mySID, []);
                     this.battle.join(this.mySide, this.uname, this.mySID, this.convertTeamToSet(requestData['side']['pokemon']));
                 }
@@ -373,6 +394,8 @@ class InterfaceLayer {
                     pName = 'Zoroark';
                     this.zoroarkActive = false;
                 }
+                console.log('should happen')
+                console.log(this.mySide) // TODO
                 // iterate through pokemon, if name found, then switch using that object and pos 0, else generate a new one, and do shit
                 for (var i = 0; i < this.battle.sides[this.mySID].pokemon.length; i++) {
                     if (pName == this.battle.sides[this.mySID].pokemon[i].species) {
@@ -419,6 +442,8 @@ class InterfaceLayer {
                     var npoke = this.agent.assumePokemon(pName, pLev, pGen, this.battle.sides[1 - this.mySID]); //newpoke
                     npoke.position = this.battle.sides[1 - this.mySID].pokemon.length;
                     this.battle.sides[1 - this.mySID].pokemon.push(npoke); //add newpoke to pokemon array
+                    console.log('SWITCH successful--------------------')
+                    console.log()
                     this.runExternalSwitch(npoke, 0); //update newpoke
                 }
             }
@@ -459,6 +484,9 @@ class InterfaceLayer {
                     }
                 }
                 var pokemon = this.battle.sides[sideid].active[0];
+                // console.log(pokemon)
+                // console.log(this.battle.sides[1]);
+
                 if (pokemon.statusData.duration) {
                     pokemon.statusData.duration--;
                 }
