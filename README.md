@@ -1,3 +1,9 @@
+# PokAImon
+Pokemon Showdown Bot
+
+Closely based on the CynthiAI bot and using much of their code.
+CynthiAI can be found here: https://github.com/Sisyphus25/CynthiAI
+
 # CynthiAI
 Pokemon Showdown bot
 
