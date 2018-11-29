@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 var Pokedex = require('./zarel/data/pokedex.js').BattlePokedex;
 /*
 	This file is used for handling communication between each agent (bot) and server
@@ -101,7 +101,7 @@ class InterfaceLayer {
 
         if (status == 'fnt') {
             pokemon.status = status.id;
-            pokemon.fainted = true; //THIS FUCKING LINE
+            pokemon.fainted = true; //THIS FUCKING LINE TODO
             pokemon.isActive = false;
             pokemon.isStarted = false;
             pokemon.side.pokemonLeft--;
@@ -293,6 +293,7 @@ class InterfaceLayer {
         var boringTags = ["", " ", "init", "title", "j", "gametype", "gen", "seed", "rated", "choice", "-supereffective", "-resisted", "-miss", "-immune", "-crit", "faint", "raw", 'fail', 'cant', '-hitcount', '-singleturn', '-activate', '-fail', '-singlemove', '-notarget'];
         var arr = line.split("|");
         var tag = arr[1];
+
         if (tag == "player") { // |player|p2|Ultimateruffles13|279
             if (arr[3] == this.uname) { //['', 'player', 'p2', 'username', '279']
                 this.mySide = arr[2];
@@ -302,11 +303,13 @@ class InterfaceLayer {
         else if (tag == 'tier') {
             this.format = arr[2];
         }
-
-        else if (tag == "request") { // |request|{"active":[{"moves":[{"move":"Night Slash","id":"nightslash","pp":24,"maxpp":24,"target":"normal","disabled":false},...
+        
+        else if (tag == "request" && arr[2] != undefined && arr[2] != '' && arr[2] != null) { // |request|{"active":[{"moves":[{"move":"Night Slash","id":"nightslash","pp":24,"maxpp":24,"target":"normal","disabled":false},...
             var requestData = JSON.parse(arr[2]); //this is basically bot's team
+
             if (!this.firstTurn) { //if first turn hasn't started
                 if (this.mySide == 'p1') {
+                    // TODO: SEE battle-engine.js line 5000
                 	//this is where bot's side is updated with a team
                     this.battle.join(this.mySide, this.uname, this.mySID, this.convertTeamToSet(requestData['side']['pokemon']));
                     //this is wehre opponent's side joins
@@ -426,7 +429,6 @@ class InterfaceLayer {
 
         //Dang: also commented for the time being
         else if (tag == 'turn') {
-            console.log(line);
             // Because we never invoke the residual event (since that would set off a lot of other events), we need to manually update turn counters.
             if (this.battle.weatherData && this.battle.weatherData.duration) {
                 this.battle.weatherData.duration--;
@@ -459,6 +461,9 @@ class InterfaceLayer {
                     }
                 }
                 var pokemon = this.battle.sides[sideid].active[0];
+                // console.log(pokemon)
+                // console.log(this.battle.sides[1]);
+
                 if (pokemon.statusData.duration) {
                     pokemon.statusData.duration--;
                 }
@@ -612,6 +617,7 @@ class InterfaceLayer {
         	var side = arr[2].split(' ')[0];
 			if (side.startsWith(this.mySide)) {
 				this.battle.sides[this.mySID].active[0].hp = 0;
+                console.log('POKEMON HAS FAINTED');
 			}
 			else {
 				this.battle.sides[1-this.mySID].active[0].hp = 0;

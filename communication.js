@@ -42,7 +42,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 Bot.prototype.setID = function(userID, password, battleFormat) {	
 	this.battleFormat = battleFormat;
 	if (userID != null && password != null) {
-		//this.ID = userID;
+		this.ID = userID;
 		this.password = password;
 		this.nextID = userID;
 	}
@@ -111,11 +111,10 @@ Bot.prototype.login = function() {
 
 		//upon receiving a message from server after POST req is sent, this function will run
 		function (err, response, body) {
-			console.log(body);
 			var data = util.safeJSON(body);
 			let _request = "|/trn " + loginname + ",0," + data.assertion; 
 			client.write(_request); //send assertion to server to confirm login
-			client.write("|/avatar 260"); //set sprite to Cynthia
+			//client.write("|/avatar 260"); //set sprite to Cynthia
 		}
 		); 
 };
@@ -173,7 +172,7 @@ Bot.prototype.processMessage = function(message) {
 	var parts;
 	var roomtitle; // At the start of every messages directed to a battle, has the format "battle-battletype-roomnumber"
 	var request;
-
+	console.log(message)
 	var msg = message.replace(/^\s+/,"");
 
 	if(msg.charAt(0) === '|' || msg.charAt(0) === '>') {
@@ -184,7 +183,6 @@ Bot.prototype.processMessage = function(message) {
 	}
 
 	console.log("Start of server message\n "+msg+"\n\n");
-
 	if (parts[0] != null) {
 		//basically to obtain CHALLSTR, which is required for logging in
 		if (parts[0]=="challstr") {
@@ -205,6 +203,7 @@ Bot.prototype.processMessage = function(message) {
 			this.ID = parts[1];
 			if (parts[1] == this.nextID) {
 				this.successfulLogin = true;
+
 			}
 			if (this.onTestingMode) {
 				this.startRandomBattle(); //trigger testing
@@ -295,9 +294,8 @@ Bot.prototype.processMessage = function(message) {
 					var bot = this.ROOMS[roomtitle].bot;
 					var agent = this.ROOMS[roomtitle].cynthiagent;
 
-
 					bot.process(msg); //basically to process message sent from server to extract game
-					if (parts[1] === 'request') {
+					if (parts[1] === 'request' && parts[2] != null && parts[2] != '' && parts[2] != undefined) {
 						request = JSON.parse(parts[2]);
 						if (request.teamPreview) {
 							if (bot.battle.sides[bot.mySID].n == 0)
@@ -324,7 +322,7 @@ Bot.prototype.processMessage = function(message) {
 							}
 						}
 					} 
-					else if (this.ROOMS[roomtitle].forceSwitch && msg.includes('|choice')) {
+					else if (msg.includes('|faint|p2a:') || this.ROOMS[roomtitle].forceSwitch && msg.includes('|choice')) {
 						this.ROOMS[roomtitle].forceSwitch = false;
 						var move;
 						if (bot.battle.sides[bot.mySID] !== null) {

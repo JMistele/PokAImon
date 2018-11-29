@@ -7,4 +7,4 @@ Pokemonshowdown.com is a platform that hosts a game simulator for online players
 
 ### How to use:
 
-To start the bot, you would need to install nodejs latest version, or any version from 6.0 onward. In the command prompt, run "node server.js" to start the bot up. The UI can be accessed at "http://localhost:8080". Enter the information required to have the bot play games for you or to challenge it. 
+To start the bot, you would need to install nodejs latest version, or any version from 6.0 onward. In the command prompt, run "node server.js" to start the bot up. The UI can be accessed at "http://localhost:8080". Enter the information required to have the bot play games for you or to challenge it. "# PokAImon" 
