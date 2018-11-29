@@ -322,7 +322,7 @@ Bot.prototype.processMessage = function(message) {
 							}
 						}
 					} 
-					else if (this.ROOMS[roomtitle].forceSwitch && msg.includes('|choice')) {
+					else if (msg.includes('|faint|p2a:') || this.ROOMS[roomtitle].forceSwitch && msg.includes('|choice')) {
 						this.ROOMS[roomtitle].forceSwitch = false;
 						var move;
 						if (bot.battle.sides[bot.mySID] !== null) {

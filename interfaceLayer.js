@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 var Pokedex = require('./zarel/data/pokedex.js').BattlePokedex;
 /*
 	This file is used for handling communication between each agent (bot) and server
@@ -295,12 +295,8 @@ class InterfaceLayer {
         var tag = arr[1];
 
         if (tag == "player") { // |player|p2|Ultimateruffles13|279
-            console.log(this.uname);
-            console.log('vs');
-            console.log(arr[3]);
             if (arr[3] == this.uname) { //['', 'player', 'p2', 'username', '279']
                 this.mySide = arr[2];
-                console.log('YEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAH');
                 this.mySID = parseInt(this.mySide.substring(1)) - 1; //basically 0 or 1
             }
         }
@@ -312,28 +308,14 @@ class InterfaceLayer {
             var requestData = JSON.parse(arr[2]); //this is basically bot's team
 
             if (!this.firstTurn) { //if first turn hasn't started
-                console.log('does it ever get set?')
-                console.log(this.mySide)
                 if (this.mySide == 'p1') {
                     // TODO: SEE battle-engine.js line 5000
                 	//this is where bot's side is updated with a team
-                    console.log('Player team:');
-                    var team = this.convertTeamToSet(requestData['side']['pokemon']);
-                    console.log(team.length);
-                    for(var i = 0; i < team.length; i++){
-                        console.log(team[i]);
-                    }
                     this.battle.join(this.mySide, this.uname, this.mySID, this.convertTeamToSet(requestData['side']['pokemon']));
                     //this is wehre opponent's side joins
                     this.battle.join((this.mySide == 'p1' ? 'p2' : 'p1'), 'opponent', 1 - this.mySID, []);
                 }
                 else { //do same thing as above, just the opposite case
-                    console.log('Player team:');
-                    var team = this.convertTeamToSet(requestData['side']['pokemon']);
-                    console.log(team.length);
-                    for(var i = 0; i < team.length; i++){
-                        console.log(team[i]);
-                    }
                     this.battle.join((this.mySide == 'p1' ? 'p2' : 'p1'), 'opponent', 1 - this.mySID, []);
                     this.battle.join(this.mySide, this.uname, this.mySID, this.convertTeamToSet(requestData['side']['pokemon']));
                 }
@@ -394,8 +376,6 @@ class InterfaceLayer {
                     pName = 'Zoroark';
                     this.zoroarkActive = false;
                 }
-                console.log('should happen')
-                console.log(this.mySide) // TODO
                 // iterate through pokemon, if name found, then switch using that object and pos 0, else generate a new one, and do shit
                 for (var i = 0; i < this.battle.sides[this.mySID].pokemon.length; i++) {
                     if (pName == this.battle.sides[this.mySID].pokemon[i].species) {
@@ -442,8 +422,6 @@ class InterfaceLayer {
                     var npoke = this.agent.assumePokemon(pName, pLev, pGen, this.battle.sides[1 - this.mySID]); //newpoke
                     npoke.position = this.battle.sides[1 - this.mySID].pokemon.length;
                     this.battle.sides[1 - this.mySID].pokemon.push(npoke); //add newpoke to pokemon array
-                    console.log('SWITCH successful--------------------')
-                    console.log()
                     this.runExternalSwitch(npoke, 0); //update newpoke
                 }
             }
@@ -451,7 +429,6 @@ class InterfaceLayer {
 
         //Dang: also commented for the time being
         else if (tag == 'turn') {
-            console.log(line);
             // Because we never invoke the residual event (since that would set off a lot of other events), we need to manually update turn counters.
             if (this.battle.weatherData && this.battle.weatherData.duration) {
                 this.battle.weatherData.duration--;
@@ -640,6 +617,7 @@ class InterfaceLayer {
         	var side = arr[2].split(' ')[0];
 			if (side.startsWith(this.mySide)) {
 				this.battle.sides[this.mySID].active[0].hp = 0;
+                console.log('POKEMON HAS FAINTED');
 			}
 			else {
 				this.battle.sides[1-this.mySID].active[0].hp = 0;
