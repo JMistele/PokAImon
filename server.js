@@ -1,3 +1,14 @@
+//just gon try some bullshit
+
+var communication = require('./communication');
+var bot = new communication.Bot();
+
+bot.initializeBot();
+
+bot.setID('greedybaseline', 'cs221', 'gen7randombattle');
+
+
+/*
 //create server
 var express = require('express');
 var app = express();
@@ -40,7 +51,9 @@ app.post('/confirminput', function (req, res) {
 	battleformat = req.body.battleformat;
 	//console.log(req.body);
 	console.log('Logging in');
-
+	console.log(userID)
+	console.log(password)
+  console.log(battleformat)
 	//login to server
 	if (userID != null && password != null) {
 		bot.setID(userID, password, battleformat);
@@ -67,4 +80,4 @@ app.get('/startbattle', function(req,res){
 	console.log('Initiating Battle');
 	bot.startRandomBattle();
 });
-
+*/
