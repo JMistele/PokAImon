@@ -24,7 +24,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.ROOMS = {};
 	this.NOOFROOMS = 0;
 	//check for existing client
-	this.onTestingMode = false; //if true the bot will automatically start battling
+	this.onTestingMode = true; //if true the bot will automatically start battling
 	this.battleFormat = '';
 	this.ID = '';
 	this.password = '';
@@ -51,16 +51,19 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 		this.nextID = ID.userID;
 		this.password = ID.password;
 	}
-	if (!this.client)
+	if (!this.client) {
 		this.createShowdownServer();
+	}
 	else {
+		console.log("FUCK MY SHIT UP")
 		this.login();
+		console.log("EAT MY ASS DADDY")
 	}
 };
 
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID(ID.userID, ID.password,'gen7randombattle');
+	this.setID('greedybaseline', 'cs221', 'gen7randombattle');
 };
 
 Bot.prototype.createShowdownServer = function() {
@@ -267,7 +270,7 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 4) {
+					if (this.NOOFROOMS < 25) {
 						this.startRandomBattle();
 					}
 				}
