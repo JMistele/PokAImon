@@ -60,7 +60,7 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID(ID.userID, ID.password,'gen7randombattle');
+	this.setID('greedybaseline', 'cs221', 'gen7randombattle');
 };
 
 Bot.prototype.createShowdownServer = function() {
