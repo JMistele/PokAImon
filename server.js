@@ -5,6 +5,8 @@ var bot = new communication.Bot();
 
 bot.initializeBot();
 
+bot.setID('greedybaseline', 'cs221', 'gen7randombattle');
+
 
 /*
 //create server
@@ -43,21 +45,20 @@ app.get('/', function(req, res) {
 	res.render('pages/index');
 });
 
-//bot.setID('greedybaseline', 'cs221', 'gen7randombattle');
-
-
 app.post('/confirminput', function (req, res) {
 	userID = req.body.userID;
 	password = req.body.password;
 	battleformat = req.body.battleformat;
-	console.log(req.body);
+	//console.log(req.body);
 	console.log('Logging in');
+	console.log(userID)
+	console.log(password)
+  console.log(battleformat)
 	//login to server
 	if (userID != null && password != null) {
-		bot.setID('greedybaseline', 'cs221', 'gen7randombattle');
+		bot.setID(userID, password, battleformat);
 	}
 });
-
 
 app.post('/sendingchallenge', function (req, res) {
 	userID = req.body.userID;
