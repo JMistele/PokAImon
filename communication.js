@@ -219,7 +219,8 @@ Bot.prototype.processMessage = function(message) {
 
 			}
 			if (this.onTestingMode) {
-				this.startRandomBattle(); //trigger testing
+				this.sendingChallenge('binguskhan','gen7randombattle');
+				//this.startRandomBattle(); //trigger testing
 			}
 		}
 
@@ -270,8 +271,9 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 25) {
-						this.startRandomBattle();
+					if (this.NOOFROOMS < 1) {
+						this.sendingChallenge('binguskhan','gen7randombattle');
+						//this.startRandomBattle();
 					}
 				}
 			}
