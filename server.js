@@ -5,8 +5,6 @@ var bot = new communication.Bot();
 
 bot.initializeBot();
 
-bot.setID('greedybaseline', 'cs221', 'gen7randombattle');
-
 
 /*
 //create server
