@@ -24,7 +24,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.ROOMS = {};
 	this.NOOFROOMS = 0;
 	//check for existing client
-	this.onTestingMode = false; //if true the bot will automatically start battling
+	this.onTestingMode = true; //if true the bot will automatically start battling
 	this.battleFormat = '';
 	this.ID = '';
 	this.password = '';
