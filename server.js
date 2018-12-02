@@ -5,7 +5,6 @@ var bot = new communication.Bot();
 
 bot.initializeBot();
 
-
 /*
 //create server
 var express = require('express');

@@ -216,7 +216,9 @@ Bot.prototype.processMessage = function(message) {
 
 			}
 			if (this.onTestingMode) {
-				this.startRandomBattle(); //trigger testing
+				this.client.write('|/utm null');
+				this.client.write('|/search gen7randombattle');
+				//this.startRandomBattle(); //trigger testing
 			}
 		}
 
