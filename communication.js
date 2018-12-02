@@ -7,8 +7,8 @@ var Perspective = require('./interfacelayer.js').InterfaceLayer;
 global.Tools = require('./zarel/tools.js').includeMods();
 var ExtraTools = require('./database/tools.js');
 
-//logging 
-var fs = require('fs'); 
+//logging
+var fs = require('fs');
 
 // required connect to server
 var sockjs = require('sockjs-client-ws');
@@ -20,11 +20,11 @@ var Bot = function(){
 };
 
 
-Bot.prototype.initializeBot = function(userID, password, battleFormat) {	
+Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.ROOMS = {};
 	this.NOOFROOMS = 0;
-	//check for existing client 		
-	this.onTestingMode = false; //if true the bot will automatically start battling
+	//check for existing client
+	this.onTestingMode = true; //if true the bot will automatically start battling
 	this.battleFormat = '';
 	this.ID = '';
 	this.password = '';
@@ -39,7 +39,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.createShowdownServer();
 };
 
-Bot.prototype.setID = function(userID, password, battleFormat) {	
+Bot.prototype.setID = function(userID, password, battleFormat) {
 	this.battleFormat = battleFormat;
 	if (userID != null && password != null) {
 		this.ID = userID;
@@ -55,12 +55,12 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 		this.createShowdownServer();
 	else {
 		this.login();
-	}				
+	}
 };
 
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID(ID.userID, ID.password,'gen7randombattle');	
+	this.setID('greedybaseline', 'cs221', 'gen7randombattle');
 };
 
 Bot.prototype.createShowdownServer = function() {
@@ -95,10 +95,10 @@ Bot.prototype.login = function() {
 	}
 
 	client = this.client;
-	
+
 	loginname = this.nextID;
 	loginpass = this.password;
-	
+
 	//send POST request to login server
 	request.post({
 		url : 'http://play.pokemonshowdown.com/action.php',
@@ -112,11 +112,11 @@ Bot.prototype.login = function() {
 		//upon receiving a message from server after POST req is sent, this function will run
 		function (err, response, body) {
 			var data = util.safeJSON(body);
-			let _request = "|/trn " + loginname + ",0," + data.assertion; 
+			let _request = "|/trn " + loginname + ",0," + data.assertion;
 			client.write(_request); //send assertion to server to confirm login
 			//client.write("|/avatar 260"); //set sprite to Cynthia
 		}
-		); 
+		);
 };
 
 Bot.prototype.logout = function() {
@@ -128,7 +128,7 @@ Bot.prototype.sendingChallenge = function(userID, battleFormat, customTeamText) 
 	var teamArray = '';
 	var customTeam = '';
 	if (customTeamText != null) {
-		var teamArray = ExtraTools.importTeam(customTeamText); 
+		var teamArray = ExtraTools.importTeam(customTeamText);
 		var customTeam = ExtraTools.packTeam(teamArray);
 	}
 	//start game
@@ -145,11 +145,11 @@ Bot.prototype.sendingChallenge = function(userID, battleFormat, customTeamText) 
 Bot.prototype.startRandomBattle = function() {
 	if (this.battleFormat = 'gen7randombattle') {
 		this.client.write('|/utm null');
-		this.client.write('|/search gen7randombattle');	
+		this.client.write('|/search gen7randombattle');
 	}
 	else if (this.battleFormat = 'gen7unratedrandombattle') {
 		this.client.write('|/utm null');
-		this.client.write('|/search gen7unratedrandombattle');	
+		this.client.write('|/search gen7unratedrandombattle');
 	}
 };
 
@@ -164,9 +164,19 @@ Bot.prototype.removeRoom = function(rmnumber) {
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
-	}	
+	}
 	return false;
 };
+
+function forceSwitchCheck(message) {
+	moves = ["Roar","Circle Throw","Dragon Tail","Whirlwind","Baton Pass", "U-turn", "Volt Switch", "Parting Shot"]
+	for(i=0; i<moves.length; i++){
+		if(message.includes(moves[i])){
+			return true;
+		}
+	}
+	return false;
+}
 
 Bot.prototype.processMessage = function(message) {
 	var parts;
@@ -206,7 +216,9 @@ Bot.prototype.processMessage = function(message) {
 
 			}
 			if (this.onTestingMode) {
-				this.startRandomBattle(); //trigger testing
+				//this.client.write('|/utm null');
+				//this.client.write('|/search gen7randombattle');
+				//this.startRandomBattle(); //trigger testing
 			}
 		}
 
@@ -214,7 +226,7 @@ Bot.prototype.processMessage = function(message) {
 			if (parts[1] == this.nextID) {
 				this.successfulLogin = false;
 			}
-		}	
+		}
 
 		else if (msg.includes("updatechallenges")) { //acepting challenges from others
 			var challenge = JSON.parse(parts[1]);
@@ -264,7 +276,7 @@ Bot.prototype.processMessage = function(message) {
 			}
 
 			else {
-				if (msg.includes('|win|')) {						
+				if (msg.includes('|win|')) {
 					var logStream = fs.createWriteStream('winloss.txt', {'flags': 'a'});
 					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
 					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
@@ -273,13 +285,13 @@ Bot.prototype.processMessage = function(message) {
 
 					}
 					else {
-						logStream.write('You lose!\n');		
+						logStream.write('You lose!\n');
 					}
 					logStream.end('')
 
 					this.client.write('|/leave ' + roomtitle);
 					this.removeRoom(roomtitle);
-					
+
 					//on testingmode
 					if (this.onTestingMode) {
 						this.client.write('|/utm null');
@@ -321,8 +333,8 @@ Bot.prototype.processMessage = function(message) {
 								this.client.send(roomtitle+"|/"+move);
 							}
 						}
-					} 
-					else if (msg.includes('|faint|p2a:') || this.ROOMS[roomtitle].forceSwitch && msg.includes('|choice')) {
+					}
+					else if (forceSwitchCheck(msg) || msg.includes('|faint|') || this.ROOMS[roomtitle].forceSwitch && msg.includes('|choice')) {
 						this.ROOMS[roomtitle].forceSwitch = false;
 						var move;
 						if (bot.battle.sides[bot.mySID] !== null) {
@@ -345,7 +357,7 @@ Bot.prototype.processMessage = function(message) {
 						}
 						else {
 							this.client.send(roomtitle + '|/move');
-						}	
+						}
 					}
 				}
 			}
