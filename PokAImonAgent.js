@@ -51,10 +51,35 @@ function PokAImonAgent() {
 		}
 	}
 
+
+			//check if there is any move that is sufficient to kill with highest accuracy, if not, use strongest move
+			if (KOMoves.length > 0) {
+				var bestAccuracy = 0;
+				var mostAccurateMove;
+				for (i=0; i < KOMoves.length; i++) {
+					move = KOMoves[i]
+					var accuracy = gameState.getMove(move).accuracy;
+					if (accuracy > bestAccuracy) {
+						bestAccuracy = accuracy;
+						mostAccurateMove = move; //TODO: fireblast appears to be more accurate than aurasphere, needs fix
+					}
+				}
+				if (log) console.log('KO Moves: '+KOMoves);
+				if (log) console.log("PREDICTION: most accurate Move " + mostAccurateMove + ' KO' + '\n');
+				return 'move ' + mostAccurateMove;
+			}
+			else if (strongestMove) {
+				if (log) console.log("PREDICTION: strongest Move " + strongestMove + ' ' + maxDamage+'/'+hpleft+ '\n');
+				return 'move ' + strongestMove;
+			}
+			else return 'forceskip';
+		}
+	}
+
 	this.stateScore = function (gameState, copiedState, mySID) {
 	 //TODO: Use neural net to give state a score
 	}
-
+	
     this.decide = function (gameState, options, mySide, forceSwitch) {
     	//AI algo goes here
     	//basic idea: this function will first make a copy of gameState (in order to avoid tampering with gameState which
