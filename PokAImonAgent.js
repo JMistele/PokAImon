@@ -138,7 +138,7 @@ function PokAImonAgent() {
 						finalState = oppState;
 					}
 				}
-				var score = stateScore(succState,mySID)
+				var score = stateScore(finalState,mySID)
 				if(score >bestScore){
 					bestScore = score;
 					bestAction = action;
