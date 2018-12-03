@@ -12,6 +12,9 @@ var BattleSide = require('./zarel/battle-engine.js').BattleSide;
 var TypeChart = require('./zarel/data/typechart.js').BattleTypeChart;
 var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
+
+//==============================================================
+//==================   FEATURES  ===============================
 // Feature construction!
 var featureKey = {};
 var featureCount = 0;
@@ -48,12 +51,19 @@ for(var j = 1; j < 7; j++){
 	featureCount += 6;
 }
 
+//================================================================
+//================   INTERFACE   =================================
+
 class PokeNet {
 	constructor(mySID, netPath) {
 		this.featureKey = {};
 		this.featureCount = 0;
 		this.mySID = mySID;
-		this.file = netPath;
+		if(!netPath){
+			this.file = 'pokeNet.json'
+		} else {
+			this.file = netPath;
+		}
 		fs.readFile(this.file, function(err, data){
 			if(err) {
 				console.log('neural net does not exist, creating...');
@@ -66,13 +76,13 @@ class PokeNet {
 	}
 
 	featurizeState(gameState){
-		//TODO: Featureize
+		//TODO: Featurize
 		var phi = [];
 		for(var i = 0; i < featureCount; i++){
 			phi.push(0);
 		}
 	}
-
+	
 	learn(stateArray, rewardArray, learningRate){
 		for(var i = 0; i < stateArray.length; i++){
 			this.net.activate([featurizeState(stateArray[i])]);
