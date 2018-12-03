@@ -1,7 +1,8 @@
 var request = require('request');
 var util = require('./util');
 // gamestate simulation
-var CynthiAgent = require('./cynthiagent.js').CynthiAgent;
+//var CynthiAgent = require('./cynthiagent.js').CynthiAgent;
+var CynthiAgent = require('./PokAImonAgent.js').PokAImonAgent;
 var Perspective = require('./interfacelayer.js').InterfaceLayer;
 //helper functions
 global.Tools = require('./zarel/tools.js').includeMods();
