@@ -297,6 +297,7 @@ Bot.prototype.processMessage = function(message) {
 						this.client.write('|/utm null');
 						this.client.write('|/search gen7randombattle');
 					}
+					// TODOJOHN: Send episode to PokeNet
 
 				}
 				else if (msg.includes('|l|') || msg.includes('|leave|')) {
@@ -358,6 +359,7 @@ Bot.prototype.processMessage = function(message) {
 						else {
 							this.client.send(roomtitle + '|/move');
 						}
+						//TODOJOHN: Add gameState to episode.
 					}
 				}
 			}
@@ -375,4 +377,5 @@ var Room = function(roomtitle, botvsuser, userID) {
 	this.cynthiagent = new CynthiAgent();
 	this.bot = new Perspective('Local room', userID, null, this.cynthiagent);
 	this.forceSwitch = false;
+	this.episode = [];
 };
