@@ -56,7 +56,6 @@ for(var j = 1; j < 7; j++){
 
 class PokeNet {
 	constructor(mySID, netPath) {
-		this.featureKey = {};
 		this.featureCount = 0;
 		this.mySID = mySID;
 		if(!netPath){
@@ -85,7 +84,7 @@ class PokeNet {
 	
 	learn(stateArray, rewardArray, learningRate){
 		for(var i = 0; i < stateArray.length; i++){
-			this.net.activate([featurizeState(stateArray[i])]);
+			this.net.activate(featurizeState(stateArray[i]));
 			this.net.propagate(learningRate, rewardArray[i]);
 		}
 	}

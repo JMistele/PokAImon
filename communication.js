@@ -3,6 +3,7 @@ var util = require('./util');
 // gamestate simulation
 var CynthiAgent = require('./cynthiagent.js').CynthiAgent;
 var Perspective = require('./interfacelayer.js').InterfaceLayer;
+var PokeNet = require('./pokeNet.js').PokeNet;
 //helper functions
 global.Tools = require('./zarel/tools.js').includeMods();
 var ExtraTools = require('./database/tools.js');
@@ -37,7 +38,17 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.successfulLogin = false;
 	//create Server
 	this.createShowdownServer();
+	//Initialize Neural Net
+	this.net = new PokeNet('pokeNet.json');
 };
+
+Bot.prototype.saveNet = function(path) {
+	this.net.saveNet(path);
+}
+
+Bot.prototype.setNet = function(path) {
+	this.net = new PokeNet(path);
+}
 
 Bot.prototype.setID = function(userID, password, battleFormat) {
 	this.battleFormat = battleFormat;
@@ -161,6 +172,8 @@ Bot.prototype.addRoom = function(roomtitle, botvsuser) {
 Bot.prototype.removeRoom = function(rmnumber) {
 	var room = this.ROOMS[rmnumber];
 	if(room) {
+		//TODO: .7 is a magic number for learning rate smh
+		this.net.learn(episode, room.bot.mySID, 1);
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -288,7 +301,8 @@ Bot.prototype.processMessage = function(message) {
 						logStream.write('You lose!\n');
 					}
 					logStream.end('')
-
+					//Add gameState to room episode
+					this.ROOMS[roomtitle].episode.push(this.ROOMS[roomtitle].bot.battle);
 					this.client.write('|/leave ' + roomtitle);
 					this.removeRoom(roomtitle);
 
@@ -349,6 +363,8 @@ Bot.prototype.processMessage = function(message) {
 						}
 					}
 					if (msg.indexOf('|turn|') > -1 ) {
+						//Add gameState to room episode
+						this.ROOMS[roomtitle].episode.push(bot.battle)
 						var move;
 						if (bot.battle.sides[bot.mySID] !== null) {
 							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], false); //activate CynthiAgent
@@ -359,7 +375,8 @@ Bot.prototype.processMessage = function(message) {
 						else {
 							this.client.send(roomtitle + '|/move');
 						}
-						//TODOJOHN: Add gameState to episode.
+						
+
 					}
 				}
 			}
