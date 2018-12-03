@@ -55,9 +55,8 @@ for(var j = 1; j < 7; j++){
 //================   INTERFACE   =================================
 
 class PokeNet {
-	constructor(mySID, netPath) {
+	constructor(netPath) {
 		this.featureCount = 0;
-		this.mySID = mySID;
 		if(!netPath){
 			this.file = 'pokeNet.json'
 		} else {
@@ -74,7 +73,7 @@ class PokeNet {
 		})
 	}
 
-	featurizeState(gameState){
+	featurizeState(gameState, mySID){
 		//TODO: Featurize
 		var phi = [];
 		for(var i = 0; i < featureCount; i++){
@@ -82,11 +81,16 @@ class PokeNet {
 		}
 	}
 	
-	learn(stateArray, rewardArray, learningRate){
+	learn(stateArray, mySID, learningRate){
 		for(var i = 0; i < stateArray.length; i++){
 			this.net.activate(featurizeState(stateArray[i]));
-			this.net.propagate(learningRate, rewardArray[i]);
+			this.net.propagate(learningRate, reward(rewardArray[i]));
 		}
+	}
+
+	reward(stateArray){
+		//TODO: Reward function from gameState array
+		return 0;
 	}
 
 	saveNet(path){
@@ -103,14 +107,10 @@ class PokeNet {
 		})
 	}
 
-	evaluate(gameState){
-		return this.net.activate(featurizeState(gameState));
+	evaluate(gameState, mySID){
+		return this.net.activate(featurizeState(gameState, mySID));
 	}
 
 }
 
-
-
-
-
-
+exports.PokeNet = PokeNet
