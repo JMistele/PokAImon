@@ -147,6 +147,29 @@ function PokAImonAgent() {
 		}
 		return bestAction;
   }
+	this.assumePokemon = function (pname, plevel, pgender, side) { //maybe add heuristics to predict certain poke's ability, item
+			var nSet = {
+					species: pname,
+					name: pname,
+					level: plevel,
+					gender: pgender,
+					evs: { hp: 84, atk: 84, def: 84, spa: 84, spd: 84, spe: 84 }, //apparently all evs are 84, as heard from somebody
+					ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 },
+					nature: "Hardy",
+					ability: "Honey Gather",
+					item: "Old Amber" //TODO: check if item was recorded in gamestate
+			};
+			// If the species only has one ability, then the pokemon's ability can only have the one ability.
+			// Barring zoroark, skill swap, and role play nonsense.
+			// This will be pretty much how we digest abilities as well
+			if (Object.keys(Tools.getTemplate(pname).abilities).length == 1) {
+					nSet.ability = Tools.getTemplate(pname).abilities['0'];
+			}
+
+			var basePokemon = new Pokemon(nSet, side);
+
+			return basePokemon;
+	}
 }
 
 module.exports.PokAImonAgent = PokAImonAgent
