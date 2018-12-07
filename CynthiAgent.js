@@ -767,10 +767,10 @@ function CynthiAgent() {
 		this.oppAction(gameState, this.mySID, true);
 		if (options && copiedState.sides[1-this.mySID].active[0] && copiedState.sides[this.mySID].active[0]) {
 			var results = this.minimax(copiedState, options, 1, this.mySID, forceSwitch); //MINIMAX
-			console.log('\n');
-			console.log(results); //an Object
-			console.log('\n');
-			console.log(copiedState.sides[this.mySID].active[0]);
+			//console.log('\n');
+			//console.log(results); //an Object
+			//console.log('\n');
+			//console.log(copiedState.sides[this.mySID].active[0]);
 
 			var bestScore = -10000;
 			var bestScoreAction = [];
@@ -879,14 +879,14 @@ function CynthiAgent() {
 		if (copiedState.sides[1-this.mySID].active[0]) {
 			//this.oppAction(gameState, mySID);
 			//console.log(copiedState.sides[1-this.mySID].active[0]);
-			console.log(copiedState.sides[1-this.mySID].active[0].hp + '/' +copiedState.sides[1-this.mySID].active[0].maxhp);
+			//console.log(copiedState.sides[1-this.mySID].active[0].hp + '/' +copiedState.sides[1-this.mySID].active[0].maxhp);
 			//console.log(gameState.sides[1-this.mySID].active[0].moveset);
 			//if (gameState.sides[1-this.mySID].active[0].moveset[0]) console.log(gameState.getMove(gameState.sides[1-this.mySID].active[0].moveset[0].id));
 			//this.oppAction (gameState, mySID, true);
 		}
 		if (gameState.sides[this.mySID].active[0]) {
 			//console.log(this.getOptions(gameState, mySID));
-			console.log(copiedState.sides[this.mySID].active[0].fullname);
+			//console.log(copiedState.sides[this.mySID].active[0].fullname);
         	//console.log(gameState.sides[this.mySID].active[0].moves);
         	//console.log(gameState.sides[1-this.mySID].active[0].moveset); //important: contains pp
         	//console.log(Object.keys(gameState.sides[this.mySID].pokemon).length);
@@ -911,9 +911,9 @@ function CynthiAgent() {
         // If the species only has one ability, then the pokemon's ability can only have the one ability.
         // Barring zoroark, skill swap, and role play nonsense.
         // This will be pretty much how we digest abilities as well
-        if (Object.keys(Tools.getTemplate(pname).abilities).length == 1) {
-            nSet.ability = Tools.getTemplate(pname).abilities['0'];
-        }
+        //if (Object.keys(Tools.getTemplate(pname).abilities).length == 1) {
+        //    nSet.ability = Tools.getTemplate(pname).abilities['0'];
+        //}
 
         var basePokemon = new Pokemon(nSet, side);
 

@@ -3,7 +3,7 @@ var util = require('./util');
 // gamestate simulation
 var CynthiAgent = require('./cynthiagent.js').CynthiAgent;
 var Perspective = require('./interfacelayer.js').InterfaceLayer;
-var PokeNet = require('./pokeNet.js').PokeNet;
+var PokeNet = require('./pokeNet.js');
 //helper functions
 global.Tools = require('./zarel/tools.js').includeMods();
 var ExtraTools = require('./database/tools.js');
@@ -36,10 +36,12 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	//check for successful login
 	this.nextID = '';
 	this.successfulLogin = false;
+	//Initialize Neural Net
+	this.net = new PokeNet.PokeNet('pokeNet.json');
 	//create Server
 	this.createShowdownServer();
-	//Initialize Neural Net
-	this.net = new PokeNet('pokeNet.json');
+	//this.net.saveNet('pokeNet.json');
+	
 };
 
 Bot.prototype.saveNet = function(path) {
@@ -173,7 +175,7 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	var room = this.ROOMS[rmnumber];
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
-		this.net.learn(episode, room.bot.mySID, 1);
+		this.net.learn(room.episode, room.bot.mySID, 1);
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -282,7 +284,7 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 4) {
+					if (this.NOOFROOMS < 1) {
 						this.startRandomBattle();
 					}
 				}
