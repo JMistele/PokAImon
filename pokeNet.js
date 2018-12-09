@@ -19,7 +19,7 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 function PokeNet(netPath){
 	this.file = netPath;
-	this.net = new Synaptic.Architect.Perceptron(featureCount, 20, 1);
+	this.net = new Synaptic.Architect.Perceptron(20, 20, 1);
 	if(this.readNet()){
 		this.net = Synaptic.Network.fromJSON(dataEx);
 	}
@@ -431,15 +431,15 @@ PokeNet.prototype.saveNet = function(path){
 	};
 
 	PokeNet.prototype.learn = function(stateArray, mySID, learningRate){
-		var rewardArray = this.reward(stateArray);
+		var rewardArray = this.reward(stateArray, mySID);
 		for(var i = 0; i < stateArray.length; i++){
 			//console.log(this.net);
-			this.net.activate(this.featurizeState(stateArray[i]));
+			this.net.activate(this.featurizeState(stateArray[i], mySID));
 			this.net.propagate(learningRate, rewardArray[i]);
 		}
 	};
 
-	PokeNet.prototype.reward  = function(stateArray){
+	PokeNet.prototype.reward  = function(stateArray, mySID){
 		//TODO: Reward function from gameState array
 		// TD Learning: val[i] = r + gamma val[i+1]
 		// Baby gets bonus for doing fat damage
