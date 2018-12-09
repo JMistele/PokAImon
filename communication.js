@@ -41,7 +41,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
-	
+
 };
 
 Bot.prototype.saveNet = function(path) {
@@ -176,6 +176,7 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
 		this.net.learn(room.episode, room.bot.mySID, 1);
+		this.net.saveNet('pokeNetNight1.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -377,7 +378,7 @@ Bot.prototype.processMessage = function(message) {
 						else {
 							this.client.send(roomtitle + '|/move');
 						}
-						
+
 
 					}
 				}

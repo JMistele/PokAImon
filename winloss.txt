@@ -913,3 +913,9 @@ You win!
 
 Bsculbreth vs. greedybaseline
 You lose!
+
+greedybaseline vs. pietromico
+You lose!
+
+greedybaseline vs. Dutch hi
+You lose!

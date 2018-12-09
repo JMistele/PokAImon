@@ -19,7 +19,7 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 function PokeNet(netPath){
 	this.file = netPath;
-	this.net = new Synaptic.Architect.Perceptron(5, 3, 1);
+	this.net = new Synaptic.Architect.Perceptron(150, 20, 1);
 	if(this.readNet()){
 		this.net = Synaptic.Network.fromJSON(dataEx);
 	}
@@ -297,8 +297,8 @@ PokeNet.prototype.saveNet = function(path){
 		phi.push(0)
 
 		for(var i=0; i<6; i++){
-			if(oppPoke[i].species !=oppActive.species){
-				if(oppPoke.length>i) {
+			if(oppPoke.length>i) {
+				if(oppPoke[i].species !=oppActive.species){
 					if(oppPoke[i].status == 'psn'){
 						phi.push(1);
 					}
@@ -329,15 +329,16 @@ PokeNet.prototype.saveNet = function(path){
 					else{
 						phi.push(0);
 					}
+					phi.push(0);
 				}
-				else{
-					for(var i=0; i<6; i++){
-						if(i!=5){
-							phi.push(0);
-						}
-						else{
-							phi.push(1);
-						}
+			}
+			else{
+				for(var i=0; i<6; i++){
+					if(i!=5){
+						phi.push(0);
+					}
+					else{
+						phi.push(1);
 					}
 				}
 			}
@@ -375,7 +376,7 @@ PokeNet.prototype.saveNet = function(path){
 		}
 		console.log('ey yo babes');
 		for(var i=0; i<6; i++){
-			if(poke[i].species !=ourPoke.species){
+			if(poke[i].species !=poke.species){
 					if(poke[i].status == 'psn'){
 						phi.push(1);
 					}
@@ -438,7 +439,6 @@ PokeNet.prototype.saveNet = function(path){
 		var rewardArray = this.reward(stateArray, mySID);
 		for(var i = 0; i < stateArray.length; i++){
 			//console.log(this.net);
-			console.log(myFurry);
 			this.net.activate(this.featurizeState(stateArray[i], mySID));
 			this.net.propagate(learningRate, rewardArray[i]);
 		}
@@ -456,17 +456,18 @@ PokeNet.prototype.saveNet = function(path){
 		var endscore = .5;
 		var endState = stateArray[stateArray.length - 1];
 		// Score for remaining pokemon
-		for(var Poke in gameState.sides[mySID].pokemon){
-			if(gameState.sides[mySID].pokemon[Poke].hp > 0){
+		for(var Poke in endState.sides[mySID].pokemon){
+			if(endState.sides[mySID].pokemon[Poke].hp > 0){
 				endscore += .08;
 			}
 		}
-		for(var Poke in gameState.sides[1-mySID].pokemon){
-			if(gameState.sides[1-mySID].pokemon[Poke].hp > 0){
+		for(var Poke in endState.sides[1-mySID].pokemon){
+			if(endState.sides[1-mySID].pokemon[Poke].hp > 0){
 				endscore -= .08;
 			}
 		}
 		rewardArray.push(endscore);
+		return rewardArray;
 	}
 
 
