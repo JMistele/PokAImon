@@ -13,43 +13,6 @@ var TypeChart = require('./zarel/data/typechart.js').BattleTypeChart;
 var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 
-//==============================================================
-//==================   FEATURES  ===============================
-// Feature construction!
-var featureKey = {};
-var featureCount = 0;
-// Damage threat features, integer values, quantity <= 144
-for(var i = 1; i < 7; i++) {
-	for(var j = 1; j < 7; j++){
-		for(var k = 1; k < 5; k++){
-			featureKey['opp_'+i+'_move_'+k+'_on_our_'+j+'_dmg'] = featureCount;
-			featureCount++;
-		}
-	}
-}
-
-// Stat effect features, binary values, quantity <= 72
-// Burn, Par, Tox, Slp, Encore, Taunt
-// Their pokemon
-for(var j = 1; j < 7; j++){
-	featureKey['opp_'+i+'_stat_effect_burn'] = featureCount;
-	featureKey['opp_'+i+'_stat_effect_par'] = featureCount + 1;
-	featureKey['opp_'+i+'_stat_effect_tox'] = featureCount + 2;
-	featureKey['opp_'+i+'_stat_effect_slp'] = featureCount + 3;
-	featureKey['opp_'+i+'_stat_effect_enc'] = featureCount + 4;
-	featureKey['opp_'+i+'_stat_effect_taun'] = featureCount + 5;
-	featureCount += 6;
-}
-// our pokemon
-for(var j = 1; j < 7; j++){
-	featureKey['our_'+i+'_stat_effect_burn'] = featureCount;
-	featureKey['our_'+i+'_stat_effect_par'] = featureCount + 1;
-	featureKey['our_'+i+'_stat_effect_tox'] = featureCount + 2;
-	featureKey['our_'+i+'_stat_effect_slp'] = featureCount + 3;
-	featureKey['our_'+i+'_stat_effect_enc'] = featureCount + 4;
-	featureKey['our_'+i+'_stat_effect_taun'] = featureCount + 5;
-	featureCount += 6;
-}
 
 //================================================================
 //================   INTERFACE   =================================
@@ -88,6 +51,9 @@ PokeNet.prototype.saveNet = function(path){
 		fs.writeFile(path, exportString, (err) => {if(err) console.log(err);});
 };
 
+//==============================================================
+//==================   FEATURES  ===============================
+// Feature construction!
 	PokeNet.prototype.featurizeState = function(gameState, mySID){
 		//TODO: Featurize
 		var phi = [];
@@ -268,7 +234,7 @@ PokeNet.prototype.saveNet = function(path){
 			}
 			else{
 				if(oppPoke[i].species!=oppActive.species){
-					for(var i=0; i<6; i++) [
+					for(var i=0; i<6; i++) {
 						phi.push(0);
 					}
 				}
@@ -460,6 +426,7 @@ PokeNet.prototype.saveNet = function(path){
 					phi.push(0);
 				}
 		}
+		console.log(phi.length);
 		return phi;
 	};
 
@@ -474,11 +441,27 @@ PokeNet.prototype.saveNet = function(path){
 
 	PokeNet.prototype.reward  = function(stateArray){
 		//TODO: Reward function from gameState array
+		// TD Learning: val[i] = r + gamma val[i+1]
+		// Baby gets bonus for doing fat damage
 		var rewardArray = [];
-		for(var i = 0; i < stateArray.length; i++){
-			rewardArray.push(0);
+		var gamma = .9;
+		for(var i = 0; i < stateArray.length - 1; i++){
+			rewardArray.push(gamma*this.evaluate(stateArray[i+1]));
 		}
-		return rewardArray;
+		var endscore = .5;
+		var endState = stateArray[stateArray.length - 1];
+		// Score for remaining pokemon
+		for(var Poke in gameState.sides[mySID].pokemon){
+			if(gameState.sides[mySID].pokemon[Poke].hp > 0){
+				endscore += .08;
+			}
+		}
+		for(var Poke in gameState.sides[1-mySID].pokemon){
+			if(gameState.sides[1-mySID].pokemon[Poke].hp > 0){
+				endscore -= .08;
+			}
+		}
+		rewardArray.push(endscore);
 	}
 
 
