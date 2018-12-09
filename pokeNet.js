@@ -243,8 +243,13 @@ PokeNet.prototype.saveNet = function(path){
 		var ourActive = gameState.sides[mySID].active[0];
 		var oppActive = gameState.sides[1-mySID].active[0];
 
+		//let boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
 		//stats
 		phi.push(oppActive.species.baseStats.hp);
+		//if(oppPoke.boosts['atk']>=0) {
+		//	var boost
+		phi.push(oppActive.species.baseStats.atk*boostTable[oppPoke.boosts['atk']]);
+		phi.push(oppActive.species.baseStats.atk*boostTable[-oppPoke.boosts['atk']]);
 		phi.push(oppActive.species.baseStats.atk);
 		phi.push(oppActive.species.baseStats.def);
 		phi.push(oppActive.species.baseStats.spa);
@@ -264,8 +269,10 @@ PokeNet.prototype.saveNet = function(path){
 				}
 			}
 			else{
-				for(var i=0; i<6; i++) [
-					phi.push(0);
+				if(oppPoke[i].species!=oppActive.species){
+					for(var i=0; i<6; i++) [
+						phi.push(0);
+					}
 				}
 			}
 		}
@@ -278,7 +285,7 @@ PokeNet.prototype.saveNet = function(path){
 		phi.push(ourActive.species.baseStats.spe);
 
 		for(var i=0; i<poke.length; i++){
-			if(poke[i].species!=oppActive.species)
+			if(poke[i].species!=ourActive.species)
 				phi.push(poke[i].species.baseStats.hp);
 				phi.push(poke[i].species.baseStats.atk);
 				phi.push(poke[i].species.baseStats.def);
@@ -287,6 +294,7 @@ PokeNet.prototype.saveNet = function(path){
 				phi.push(poke[i].species.baseStats.spe);
 		}
 
+//status
 
 		if(oppActive.status == 'psn'){
 			phi.push(1);
@@ -318,36 +326,141 @@ PokeNet.prototype.saveNet = function(path){
 		else{
 			phi.push(0);
 		}
+		phi.push(0)
 
-		if(oppActive.status == 'psn'){
+		for(var i=0; i<6; i++){
+			if(oppPoke[i].species !=oppActive.species){
+				if(oppPoke.length>i) {
+					if(oppPoke[i].status == 'psn'){
+						phi.push(1);
+					}
+					else{
+						phi.push(0);
+					}
+					if(oppPoke[i].status == 'tox'){
+						phi.push(1);
+					}
+					else{
+						phi.push(0);
+					}
+					if(oppPoke[i].status == 'brn'){
+						phi.push(1);
+					}
+					else{
+						phi.push(0);
+					}
+					if(oppPoke[i].status == 'par'){
+						phi.push(1);
+					}
+					else{
+						phi.push(0);
+					}
+					if(oppPoke[i].status == 'slp'){
+						phi.push(1);
+					}
+					else{
+						phi.push(0);
+					}
+				}
+				else{
+					for(var i=0; i<6; i++){
+						if(i!=5){
+							phi.push(0);
+						}
+						else{
+							phi.push(1);
+						}
+					}
+				}
+			}
+		}
+
+		if(ourActive.status == 'psn'){
 			phi.push(1);
 		}
 		else{
 			phi.push(0);
 		}
-		if(oppActive.status == 'tox'){
+		if(ourActive.status == 'tox'){
 			phi.push(1);
 		}
 		else{
 			phi.push(0);
 		}
-		if(oppActive.status == 'brn'){
+		if(ourActive.status == 'brn'){
 			phi.push(1);
 		}
 		else{
 			phi.push(0);
 		}
-		if(oppActive.status == 'par'){
+		if(ourActive.status == 'par'){
 			phi.push(1);
 		}
 		else{
 			phi.push(0);
 		}
-		if(oppActive.status == 'slp'){
+		if(ourActive.status == 'slp'){
 			phi.push(1);
 		}
 		else{
 			phi.push(0);
+		}
+
+		for(var i=0; i<6; i++){
+			if(poke[i].species !=ourPoke.species){
+					if(poke[i].status == 'psn'){
+						phi.push(1);
+					}
+					else{
+						phi.push(0);
+					}
+					if(poke[i].status == 'tox'){
+						phi.push(1);
+					}
+					else{
+						phi.push(0);
+					}
+					if(poke[i].status == 'brn'){
+						phi.push(1);
+					}
+					else{
+						phi.push(0);
+					}
+					if(poke[i].status == 'par'){
+						phi.push(1);
+					}
+					else{
+						phi.push(0);
+					}
+					if(poke[i].status == 'slp'){
+						phi.push(1);
+					}
+					else{
+						phi.push(0);
+					}
+			}
+		}
+		//If pokemon are fainted
+		for(var i=0; i<6; i++){
+			if(oppPoke.length>i){
+				if(oppPoke[i].fainted == true){
+					phi.push(1);
+				}
+				else {
+					phi.push(0);
+				}
+			}
+			else{
+				phi.push(0);
+			}
+		}
+		for(var i=0; i<6; i++){
+				if(poke[i].fainted == true){
+					phi.push(1);
+				}
+				else {
+					phi.push(0);
+				}
 		}
 		return phi;
 	};
