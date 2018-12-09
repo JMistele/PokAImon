@@ -248,8 +248,6 @@ PokeNet.prototype.saveNet = function(path){
 		phi.push(oppActive.species.baseStats.hp);
 		//if(oppPoke.boosts['atk']>=0) {
 		//	var boost
-		phi.push(oppActive.species.baseStats.atk*boostTable[oppPoke.boosts['atk']]);
-		phi.push(oppActive.species.baseStats.atk*boostTable[-oppPoke.boosts['atk']]);
 		phi.push(oppActive.species.baseStats.atk);
 		phi.push(oppActive.species.baseStats.def);
 		phi.push(oppActive.species.baseStats.spa);
