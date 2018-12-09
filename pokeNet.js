@@ -19,7 +19,7 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 function PokeNet(netPath){
 	this.file = netPath;
-	this.net = new Synaptic.Architect.Perceptron(20, 20, 1);
+	this.net = new Synaptic.Architect.Perceptron(5, 3, 1);
 	if(this.readNet()){
 		this.net = Synaptic.Network.fromJSON(dataEx);
 	}
@@ -55,6 +55,7 @@ PokeNet.prototype.saveNet = function(path){
 //==================   FEATURES  ===============================
 // Feature construction!
 	PokeNet.prototype.featurizeState = function(gameState, mySID){
+		console.log('ey yo babes lone digger');
 		//TODO: Featurize
 		var phi = [];
 		//getting opponent highest dmg move
@@ -63,10 +64,12 @@ PokeNet.prototype.saveNet = function(path){
 		var maxDmg = 0;
 		for(var i=0; i<4; i++) {
 			var damage = 0;
-			if(moves.length>i){
+			if(oppMoves.length>i){
 				var attacker = gameState.sides[1-mySID].active[0];
 				var defender = gameState.sides[mySID].active[0];
-				var damage = gameState.getDamage(attacker, defender, moves[i], null);
+				console.log('myster function entered');
+				var damage = gameState.getDamage(attacker, defender, oppMoves[i], null);
+				console.log('succeeded in getdamage');
 			}
 			if(damage>maxDmg){
 				maxDmg = damage;
@@ -87,122 +90,125 @@ PokeNet.prototype.saveNet = function(path){
 		}
 		phi.push(maxDmgU)
 		//types
+		console.log('its the fuckin for loop');
 		for(var i=0; i<18; i++){
-			if(i=0 && gameState.sides[1-mySID].active[0].types.includes("Grass")){
-				phi(push(1));
+			console.log('iteration');
+			if(i==0 && gameState.sides[1-mySID].active[0].types.includes("Grass")){
+				phi.push(1);
 			}
 			else if(i==1 && gameState.sides[1-mySID].active[0].types.includes("Water")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==2 && gameState.sides[1-mySID].active[0].types.includes("Fire")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==3 && gameState.sides[1-mySID].active[0].types.includes("Normal")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==4 && gameState.sides[1-mySID].active[0].types.includes("Fighting")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==5 && gameState.sides[1-mySID].active[0].types.includes("Flying")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==6 && gameState.sides[1-mySID].active[0].types.includes("Poison")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==7 && gameState.sides[1-mySID].active[0].types.includes("Electric")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==8 && gameState.sides[1-mySID].active[0].types.includes("Ground")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==9 && gameState.sides[1-mySID].active[0].types.includes("Psychic")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==10 && gameState.sides[1-mySID].active[0].types.includes("Rock")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==11 && gameState.sides[1-mySID].active[0].types.includes("Ice")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==12 && gameState.sides[1-mySID].active[0].types.includes("Bug")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==13 && gameState.sides[1-mySID].active[0].types.includes("Dragon")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==14 && gameState.sides[1-mySID].active[0].types.includes("Ghost")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==15 && gameState.sides[1-mySID].active[0].types.includes("Dark")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==16 && gameState.sides[1-mySID].active[0].types.includes("Steel")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==17 && gameState.sides[1-mySID].active[0].types.includes("Fairy")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else{
-				phi(push(0));
+				phi.push(0);
 			}
 		}
+		console.log('ey yo babes 1');
 		for(var i=0; i<18; i++){
-			if(i=0 && gameState.sides[mySID].active[0].types.includes("Grass")){
-				phi(push(1));
+			if(i==0 && gameState.sides[mySID].active[0].types.includes("Grass")){
+				phi.push(1);
 			}
 			else if(i==1 && gameState.sides[mySID].active[0].types.includes("Water")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==2 && gameState.sides[mySID].active[0].types.includes("Fire")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==3 && gameState.sides[mySID].active[0].types.includes("Normal")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==4 && gameState.sides[mySID].active[0].types.includes("Fighting")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==5 && gameState.sides[mySID].active[0].types.includes("Flying")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==6 && gameState.sides[mySID].active[0].types.includes("Poison")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==7 && gameState.sides[mySID].active[0].types.includes("Electric")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==8 && gameState.sides[mySID].active[0].types.includes("Ground")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==9 && gameState.sides[mySID].active[0].types.includes("Psychic")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==10 && gameState.sides[mySID].active[0].types.includes("Rock")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==11 && gameState.sides[mySID].active[0].types.includes("Ice")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==12 && gameState.sides[mySID].active[0].types.includes("Bug")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==13 && gameState.sides[mySID].active[0].types.includes("Dragon")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==14 && gameState.sides[mySID].active[0].types.includes("Ghost")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==15 && gameState.sides[mySID].active[0].types.includes("Dark")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==16 && gameState.sides[mySID].active[0].types.includes("Steel")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else if(i==17 && gameState.sides[mySID].active[0].types.includes("Fairy")){
-				phi(push(1));
+				phi.push(1);
 			}
 			else{
-				phi(push(0));
+				phi.push(0);
 			}
 		}
 
@@ -211,51 +217,49 @@ PokeNet.prototype.saveNet = function(path){
 
 		//let boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
 		//stats
-		phi.push(oppActive.species.baseStats.hp);
+		phi.push(oppActive.baseStats.hp);
 		//if(oppPoke.boosts['atk']>=0) {
 		//	var boost
-		phi.push(oppActive.species.baseStats.atk);
-		phi.push(oppActive.species.baseStats.def);
-		phi.push(oppActive.species.baseStats.spa);
-		phi.push(oppActive.species.baseStats.spd);
-		phi.push(oppActive.species.baseStats.spe);
+		phi.push(oppActive.baseStats.atk);
+		phi.push(oppActive.baseStats.def);
+		phi.push(oppActive.baseStats.spa);
+		phi.push(oppActive.baseStats.spd);
+		phi.push(oppActive.baseStats.spe);
 
 
 		for(var i=0; i<6; i++){
 			if(oppPoke.length>i){
 				if(oppPoke[i].species!=oppActive.species) {
-					phi.push(oppPoke[i].species.baseStats.hp);
-					phi.push(oppPoke[i].species.baseStats.atk);
-					phi.push(oppPoke[i].species.baseStats.def);
-					phi.push(oppPoke[i].species.baseStats.spa);
-					phi.push(oppPoke[i].species.baseStats.spd);
-					phi.push(oppPoke[i].species.baseStats.spe);
+					phi.push(oppPoke[i].baseStats.hp);
+					phi.push(oppPoke[i].baseStats.atk);
+					phi.push(oppPoke[i].baseStats.def);
+					phi.push(oppPoke[i].baseStats.spa);
+					phi.push(oppPoke[i].baseStats.spd);
+					phi.push(oppPoke[i].baseStats.spe);
 				}
 			}
 			else{
-				if(oppPoke[i].species!=oppActive.species){
 					for(var i=0; i<6; i++) {
 						phi.push(0);
 					}
-				}
 			}
 		}
-
-		phi.push(ourActive.species.baseStats.hp);
-		phi.push(ourActive.species.baseStats.atk);
-		phi.push(ourActive.species.baseStats.def);
-		phi.push(ourActive.species.baseStats.spa);
-		phi.push(ourActive.species.baseStats.spd);
-		phi.push(ourActive.species.baseStats.spe);
+		console.log(ourActive.species);
+		phi.push(ourActive.baseStats.hp);
+		phi.push(ourActive.baseStats.atk);
+		phi.push(ourActive.baseStats.def);
+		phi.push(ourActive.baseStats.spa);
+		phi.push(ourActive.baseStats.spd);
+		phi.push(ourActive.baseStats.spe);
 
 		for(var i=0; i<poke.length; i++){
 			if(poke[i].species!=ourActive.species)
-				phi.push(poke[i].species.baseStats.hp);
-				phi.push(poke[i].species.baseStats.atk);
-				phi.push(poke[i].species.baseStats.def);
-				phi.push(poke[i].species.baseStats.spa);
-				phi.push(poke[i].species.baseStats.spd);
-				phi.push(poke[i].species.baseStats.spe);
+				phi.push(poke[i].baseStats.hp);
+				phi.push(poke[i].baseStats.atk);
+				phi.push(poke[i].baseStats.def);
+				phi.push(poke[i].baseStats.spa);
+				phi.push(poke[i].baseStats.spd);
+				phi.push(poke[i].baseStats.spe);
 		}
 
 //status
@@ -369,7 +373,7 @@ PokeNet.prototype.saveNet = function(path){
 		else{
 			phi.push(0);
 		}
-
+		console.log('ey yo babes');
 		for(var i=0; i<6; i++){
 			if(poke[i].species !=ourPoke.species){
 					if(poke[i].status == 'psn'){
@@ -434,6 +438,7 @@ PokeNet.prototype.saveNet = function(path){
 		var rewardArray = this.reward(stateArray, mySID);
 		for(var i = 0; i < stateArray.length; i++){
 			//console.log(this.net);
+			console.log(myFurry);
 			this.net.activate(this.featurizeState(stateArray[i], mySID));
 			this.net.propagate(learningRate, rewardArray[i]);
 		}
@@ -446,7 +451,7 @@ PokeNet.prototype.saveNet = function(path){
 		var rewardArray = [];
 		var gamma = .9;
 		for(var i = 0; i < stateArray.length - 1; i++){
-			rewardArray.push(gamma*this.evaluate(stateArray[i+1]));
+			rewardArray.push(gamma*this.evaluate(stateArray[i+1], mySID));
 		}
 		var endscore = .5;
 		var endState = stateArray[stateArray.length - 1];
@@ -466,7 +471,9 @@ PokeNet.prototype.saveNet = function(path){
 
 
 	PokeNet.prototype.evaluate = function(gameState, mySID){
-		return this.net.activate(this.featurizeState(gameState, mySID));
+		var vecta = this.featurizeState(gameState, mySID);
+		console.log('featurizeState finished');
+		return this.net.activate(vecta);
 	}
 /* class PokeNet {
 
