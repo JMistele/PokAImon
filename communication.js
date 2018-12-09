@@ -285,7 +285,7 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 1) {
+					if (this.NOOFROOMS < 10) {
 						this.startRandomBattle();
 					}
 				}
