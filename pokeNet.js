@@ -81,11 +81,13 @@ PokeNet.prototype.saveNet = function(path){
 		var moves = gameState.sides[mySID].active[0].moves;
 		var maxDmgU = 0;
 		for(var i=0; i<4; i++) {
+			if(moves.length>i){
 			var attacker = gameState.sides[mySID].active[0];
 			var defender = gameState.sides[1-mySID].active[0];
 		  var damage = gameState.getDamage(attacker, defender, moves[i], null);
 			if(damage>maxDmgU){
 				maxDmgU = damage;
+			}
 			}
 		}
 		phi.push(maxDmgU)
