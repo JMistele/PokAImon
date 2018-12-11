@@ -20,13 +20,6 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 function PokeNet(netPath, makeNew){
 	this.file = netPath;
 	this.net = new Synaptic.Architect.Perceptron(145, 20, 1);
-	var phifake = [];
-	for(var i = 0; i < 75; i++){
-		phifake.push(-5);
-		phifake.push(200)
-	}
-	console.log('HERE I AM =====================================================================');
-	console.log(this.net.activate(phifake));
 	if(!makeNew && this.readNet()){
 		this.net = Synaptic.Network.fromJSON(dataEx);
 	}
@@ -433,23 +426,29 @@ PokeNet.prototype.saveNet = function(path){
 					phi.push(0);
 				}
 		}
-
-		var phiClean = [];
-		for(var i = 0; i < phi.length; i++){
-			if(typeof phi[i] !== 'undefined'){
-				phiClean.push(phi[i]);
-			}
-		}
-		console.log(phiClean.length);
+		console.log(phi.length);
 		return phi;
 	};
 
 	PokeNet.prototype.learn = function(stateArray, mySID, learningRate){
 		var rewardArray = this.reward(stateArray, mySID);
+		console.log(stateArray.length);
 		for(var i = 0; i < stateArray.length; i++){
 			//console.log(this.net);
-			this.net.activate(this.featurizeState(stateArray[i], mySID));
-			this.net.propagate(learningRate, rewardArray[i]);
+			var vecta = this.featurizeState(stateArray[i], mySID)
+			console.log('here goes vecta');
+			for(var j = 0; j < vecta.length; j++){
+				console.log(vecta[j]);
+				if(vecta[j] == null){
+					console.log('Damn');
+				}
+			}
+			console.log('done');
+			console.log(vecta.length);
+			console.log(this.net.activate(vecta));
+			console.log(learningRate);
+			console.log(rewardArray[i]);
+			this.net.propagate(learningRate, [rewardArray[i]]);
 		}
 	};
 
@@ -460,7 +459,9 @@ PokeNet.prototype.saveNet = function(path){
 		var rewardArray = [];
 		var gamma = .9;
 		for(var i = 0; i < stateArray.length - 1; i++){
-			rewardArray.push(gamma*this.evaluate(stateArray[i+1], mySID));
+			var evalu = this.evaluate(stateArray[i+1], mySID);
+			console.log(evalu);
+			rewardArray.push(.5 + gamma*(evalu - .5));
 		}
 		var endscore = .5;
 		var endState = stateArray[stateArray.length - 1];
@@ -482,19 +483,6 @@ PokeNet.prototype.saveNet = function(path){
 
 	PokeNet.prototype.evaluate = function(gameState, mySID){
 		var vecta = this.featurizeState(gameState, mySID);
-		var count = 0;
-		var exporti = this.net.toJSON();
-		for(var i = 0; i < exporti.neurons.length; i++){
-			if(exporti.neurons[i].layer == 'input'){
-				count++;
-			}
-		}
-		console.log(count);
-		console.log(vecta.length);
-		for(var i = 100; i < 150; i++) {
-			console.log(vecta[i]);
-		}
-		console.log(this.net.activate(vecta));
 		return this.net.activate(vecta);
 	}
 /* class PokeNet {
