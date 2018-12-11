@@ -177,7 +177,7 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
 		this.net.learn(room.episode, room.bot.mySID, 1);
-		this.net.saveNet('pokeNetRound9.json');
+		this.net.saveNet('pokeNetRound10.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -286,7 +286,7 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 1) {
+					if (this.NOOFROOMS < 10) {
 						this.startRandomBattle();
 					}
 				}

@@ -19,7 +19,7 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 function PokeNet(netPath, makeNew){
 	this.file = netPath;
-	this.net = new Synaptic.Architect.Perceptron(145, 20, 1);
+	this.net = new Synaptic.Architect.Perceptron(188, 20, 1);
 	if(!makeNew && this.readNet()){
 		this.net = Synaptic.Network.fromJSON(dataEx);
 	}
@@ -222,9 +222,9 @@ PokeNet.prototype.saveNet = function(path){
 		phi.push(oppActive.baseStats.spd);
 		phi.push(oppActive.baseStats.spe);
 
-
+		//Adds six stats per loop
 		for(var i=0; i<6; i++){
-			if(oppPoke.length>i){
+			if(i < oppPoke.length){
 				if(oppPoke[i].species!=oppActive.species) {
 					phi.push(oppPoke[i].hp);
 					phi.push(oppPoke[i].baseStats.atk);
@@ -235,7 +235,7 @@ PokeNet.prototype.saveNet = function(path){
 				}
 			}
 			else{
-					for(var i=0; i<6; i++) {
+					for(var j=0; j<6; j++) {
 						phi.push(0);
 					}
 			}
@@ -294,7 +294,7 @@ PokeNet.prototype.saveNet = function(path){
 
 		for(var i=0; i<6; i++){
 			if(oppPoke.length>i) {
-				if(oppPoke[i].species !=oppActive.species){
+				if(oppPoke[i].species != oppActive.species){
 					if(oppPoke[i].status == 'psn'){
 						phi.push(1);
 					}
@@ -329,8 +329,8 @@ PokeNet.prototype.saveNet = function(path){
 				}
 			}
 			else{
-				for(var i=0; i<6; i++){
-					if(i!=5){
+				for(var j=0; j<6; j++){
+					if(j!=5){
 						phi.push(0);
 					}
 					else{
@@ -371,7 +371,7 @@ PokeNet.prototype.saveNet = function(path){
 			phi.push(0);
 		}
 		for(var i=0; i<6; i++){
-			if(poke[i].species !=poke.species){
+			if(poke[i].species != ourActive.species){
 					if(poke[i].status == 'psn'){
 						phi.push(1);
 					}
@@ -432,22 +432,10 @@ PokeNet.prototype.saveNet = function(path){
 
 	PokeNet.prototype.learn = function(stateArray, mySID, learningRate){
 		var rewardArray = this.reward(stateArray, mySID);
-		console.log(stateArray.length);
 		for(var i = 0; i < stateArray.length; i++){
 			//console.log(this.net);
 			var vecta = this.featurizeState(stateArray[i], mySID)
-			console.log('here goes vecta');
-			for(var j = 0; j < vecta.length; j++){
-				console.log(vecta[j]);
-				if(vecta[j] == null){
-					console.log('Damn');
-				}
-			}
-			console.log('done');
-			console.log(vecta.length);
-			console.log(this.net.activate(vecta));
-			console.log(learningRate);
-			console.log(rewardArray[i]);
+			this.net.activate(vecta);
 			this.net.propagate(learningRate, [rewardArray[i]]);
 		}
 	};
@@ -460,7 +448,6 @@ PokeNet.prototype.saveNet = function(path){
 		var gamma = .9;
 		for(var i = 0; i < stateArray.length - 1; i++){
 			var evalu = this.evaluate(stateArray[i+1], mySID);
-			console.log(evalu);
 			rewardArray.push(.5 + gamma*(evalu - .5));
 		}
 		var endscore = .5;

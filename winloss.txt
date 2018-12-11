@@ -3487,3 +3487,30 @@ You lose!
 
 Salprmno vs. greedyBaseline
 You lose!
+
+S3-G S3NAD vs. greedyBaseline
+You win!
+
+Habibi_96 vs. greedyBaseline
+You win!
+
+greedyBaseline vs. 22wwe3weed
+You lose!
+
+TL1 vs. greedyBaseline
+You win!
+
+sdkjbc vs. greedyBaseline
+You win!
+
+jejeclem vs. greedyBaseline
+You lose!
+
+JaimeAmores vs. greedyBaseline
+You win!
+
+greedyBaseline vs. Gabrielwarsbr
+You lose!
+
+bob0123 vs. greedyBaseline
+You lose!
