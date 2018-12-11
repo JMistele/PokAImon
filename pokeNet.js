@@ -19,7 +19,7 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 function PokeNet(netPath, makeNew){
 	this.file = netPath;
-	this.net = new Synaptic.Architect.Perceptron(150, 20, 1);
+	this.net = new Synaptic.Architect.Perceptron(145, 20, 1);
 	var phifake = [];
 	for(var i = 0; i < 75; i++){
 		phifake.push(-5);
@@ -89,8 +89,6 @@ PokeNet.prototype.saveNet = function(path){
 			var attacker = gameState.sides[mySID].active[0];
 			var defender = gameState.sides[1-mySID].active[0];
 		  var damage = gameState.getDamage(attacker, defender, moves[i], null);
-			console.log(maxDmgU);
-			console.log('Max Damage ^');
 			if(damage>maxDmgU){
 				maxDmgU = damage;
 			}
@@ -379,7 +377,6 @@ PokeNet.prototype.saveNet = function(path){
 		else{
 			phi.push(0);
 		}
-		console.log('ey yo babes');
 		for(var i=0; i<6; i++){
 			if(poke[i].species !=poke.species){
 					if(poke[i].status == 'psn'){
@@ -436,7 +433,14 @@ PokeNet.prototype.saveNet = function(path){
 					phi.push(0);
 				}
 		}
-		console.log(phi.length);
+
+		var phiClean = [];
+		for(var i = 0; i < phi.length; i++){
+			if(typeof phi[i] !== 'undefined'){
+				phiClean.push(phi[i]);
+			}
+		}
+		console.log(phiClean.length);
 		return phi;
 	};
 

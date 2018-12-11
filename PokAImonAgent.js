@@ -97,9 +97,9 @@ function PokAImonAgent() {
 		//if need to switch
     if(forceSwitch) {
 				var newOptions = [];
-				for(var i=0; i<options.length; i++) {
-						if(options[i].includes("switch")) {
-								newOptions.push(options[i]);
+				for(var i=0; i<choices.length; i++) {
+						if(choices[i].includes("switch")) {
+								newOptions.push(choices[i]);
 						}
 				}
 				choices = newOptions;
