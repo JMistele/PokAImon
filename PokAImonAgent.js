@@ -91,8 +91,11 @@ function PokAImonAgent() {
 		console.log('My SID');
 		console.log(mySID);
 		var choices = this.getOptions(gameState, mySID);
-		if(choices.length == 0){
+		console.log(choices.length);
+		if(choices==null){
 			console.log('ah rip');
+			choices = this.getOptions(gameState, mySID);
+			console.log(choices.length);
 		}
 		//if need to switch
     if(forceSwitch) {

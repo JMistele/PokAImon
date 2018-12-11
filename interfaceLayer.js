@@ -464,13 +464,13 @@ class InterfaceLayer {
                 // console.log(pokemon)
                 // console.log(this.battle.sides[1]);
 
-                if (pokemon.statusData.duration) {
+                if (pokemon!=null&&pokemon.statusData.duration) {
                     pokemon.statusData.duration--;
                 }
-                if (pokemon.statusData.time) {
+                if (pokemon!=null&&pokemon.statusData.time) {
                     pokemon.statusData.time++;
                 }
-                if (pokemon.statusData.stage) {
+                if (pokemon!=null&&pokemon.statusData.stage) {
                     pokemon.statusData.stage++;
                 }
                 for (var status in pokemon.volatiles) {
@@ -865,6 +865,7 @@ class InterfaceLayer {
         		activePoke.ability = toId(Pokedex[toId(sps)].abilities[0]);
         	}
         	else {
+        if(this.battle.sides[1-this.mySID].active[0]!=null) {
 				this.battle.sides[1-this.mySID].active[0].species = sps;
 				var activePoke = this.battle.sides[1-this.mySID].active[0];
 
@@ -882,6 +883,7 @@ class InterfaceLayer {
         			stat = Math.floor(Math.floor(2 * stat + activePoke.set.ivs[statname] + Math.floor(activePoke.set.evs[statname] / 4)) * activePoke.level / 100 + 5);
         			activePoke.stats[statname] = stat;
         		}
+          }
         	}
 
         }
