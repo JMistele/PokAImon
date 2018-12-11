@@ -3497,6 +3497,8 @@ let BattleFormatsData = {
 	castform: {
 		tier: "(PU)",
 		doublesTier: "DUU",
+		randomBattleMoves: ["sunnyday", "weatherball", "solarbeam", "icebeam"],
+		requiredAbility: 'Forecast',
 	},
 	castformsunny: {
 		randomBattleMoves: ["sunnyday", "weatherball", "solarbeam", "icebeam"],
@@ -3509,6 +3511,7 @@ let BattleFormatsData = {
 		battleOnly: true,
 	},
 	castformsnowy: {
+		randomBattleMoves: ["hail", "weatherball", "hurricane", "icebeam"],
 		requiredAbility: 'Forecast',
 		battleOnly: true,
 	},
