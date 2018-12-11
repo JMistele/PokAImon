@@ -38,7 +38,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.nextID = '';
 	this.successfulLogin = false;
 	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNetRound8.json', false);
+	this.net = new PokeNet.PokeNet('pokeNetNight2.json', true);
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
@@ -286,7 +286,7 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 8) {
+					if (this.NOOFROOMS < 1) {
 						this.startRandomBattle();
 					}
 				}
@@ -348,7 +348,7 @@ Bot.prototype.processMessage = function(message) {
 					//TODO: there is also [invalid choice]: Can't switch.
 						if (parts[2].indexOf('a switch response') >-1 || parts[2].indexOf('switch to a fainted')>-1) { //need switch
 							if (bot.battle.sides[bot.mySID] !== null) {
-								let move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], true); //activate CynthiAgent
+								let move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], true, this.net); //activate CynthiAgent
 								this.client.send(roomtitle+"|/"+move);
 							}
 						}
@@ -357,7 +357,7 @@ Bot.prototype.processMessage = function(message) {
 						this.ROOMS[roomtitle].forceSwitch = false;
 						var move;
 						if (bot.battle.sides[bot.mySID] !== null) {
-							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], true); //activate CynthiAgent
+							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], true, this.net); //activate CynthiAgent
 						}
 						if (move) {//in case action is undefined, this will be an error, therefore the condition
 							this.client.send(roomtitle + '|/' + move);
@@ -371,7 +371,7 @@ Bot.prototype.processMessage = function(message) {
 						this.ROOMS[roomtitle].episode.push(bot.battle)
 						var move;
 						if (bot.battle.sides[bot.mySID] !== null) {
-							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], false); //activate CynthiAgent
+							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], false, this.net); //activate CynthiAgent
 						}
 						if (move) {//in case action is undefined, this will be an error, therefore the condition
 							this.client.send(roomtitle + '|/' + move);

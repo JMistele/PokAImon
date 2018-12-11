@@ -4,6 +4,8 @@ var Pokemon = require('./zarel/battle-engine.js').BattlePokemon;
 var BattleSide = require('./zarel/battle-engine.js').BattleSide;
 var TypeChart = require('./zarel/data/typechart.js').BattleTypeChart;
 var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
+var PokeNet = require('./pokeNet.js');
+
 
 function PokAImonAgent() {
 	//working well
@@ -28,6 +30,8 @@ function PokAImonAgent() {
 
   this.getOpponentActions = function(gameState,mySID) { //this function returns opponent's options
 		var options = [];
+		var attacker = gameState.sides[1-mySID].active[0];
+		var defender = gameState.sides[mySID].active[0];
 		var moves = gameState.sides[1-mySID].active[0].moves;
 		for (var i=0; i < moves.length; i++) { //iterate through moves
 			var action = 'move ' + moves[i];
@@ -77,14 +81,19 @@ function PokAImonAgent() {
 		}
 	}
 
-	this.stateScore = function (gameState, mySID) {
-	 //TODO: Use neural net to give state a score
-	 return 1;
+	this.stateScore = function (gameState, mySID, myNet) {
+	 return myNet.evaluate(gameState, mySID);
 	}
 
-  this.decide = function (gameState, options, mySide, forceSwitch) {
-		var choices = options;
+  this.decide = function (gameState, options, mySide, forceSwitch, myNet) {
+
 		var mySID = mySide.n;
+		console.log('My SID');
+		console.log(mySID);
+		var choices = this.getOptions(gameState, mySID);
+		if(choices.length == 0){
+			console.log('ah rip');
+		}
 		//if need to switch
     if(forceSwitch) {
 				var newOptions = [];
@@ -98,7 +107,8 @@ function PokAImonAgent() {
 		var botSide = 'p'+(mySID+1);
 		var oppSide = 'p'+(2-mySID);
 		var bestAction = null;
-		var bestScore = -1000000000
+		var bestScore = -10
+		console.log(choices.length);
 		for(var i = 0; i<choices.length; i++) {
 			var action = choices[i];
 			var succState = gameState.copy();
@@ -108,17 +118,17 @@ function PokAImonAgent() {
 				succState.choose(oppSide, 'forceskip');
 				succState.choose(botSide, action);
 				succState.choose(botSide, action);
-				var score = stateScore(succState,mySID)
-				if(score >bestScore){
+				var score = this.stateScore(succState,mySID, myNet)
+				if(score > bestScore){
 					bestScore = score;
 					bestAction = action;
 				}
 			}
 			else{
-				var opponScore = 100000000;
-				var oppMoves = getOpponentActions(gameState,mySID);
+				var opponScore = 100;
+				var oppMoves = this.getOpponentActions(gameState,mySID);
 				var finalState = null;
-				for(var j=0; j<oppMoves.length; i++){
+				for(var j=0; j<oppMoves.length; j++){
 
 					/*
 					if (oppMoves[j].startsWith('move')) { //predict worst move when less than 2 moves have been revealed
@@ -129,21 +139,27 @@ function PokAImonAgent() {
 					}
 					*/
 
-					var oppState = succState;
+					var oppState = succState.copy();
 					oppState.choose(oppSide, oppMoves[j]);
 					oppState.choose(botSide, action);
-					var oScore = stateScore(oppState,mySID)
+					var oScore = this.stateScore(oppState, mySID, myNet);
+					console.log(oScore);
 					if(opponScore>oScore) {
 						opponScore = oScore;
 						finalState = oppState;
+						console.log('oppState changed');
 					}
 				}
-				var score = stateScore(finalState,mySID)
+				var score = this.stateScore(finalState ,mySID, myNet);
 				if(score >bestScore){
 					bestScore = score;
 					bestAction = action;
 				}
 			}
+		}
+		console.log(bestAction);
+		if(bestAction == null){
+			console.log("SUCK MY DONKEY DICK");
 		}
 		return bestAction;
   }

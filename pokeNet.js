@@ -19,7 +19,14 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 function PokeNet(netPath, makeNew){
 	this.file = netPath;
-	this.net = new Synaptic.Architect.Perceptron(198, 20, 1);
+	this.net = new Synaptic.Architect.Perceptron(150, 20, 1);
+	var phifake = [];
+	for(var i = 0; i < 75; i++){
+		phifake.push(-5);
+		phifake.push(200)
+	}
+	console.log('HERE I AM =====================================================================');
+	console.log(this.net.activate(phifake));
 	if(!makeNew && this.readNet()){
 		this.net = Synaptic.Network.fromJSON(dataEx);
 	}
@@ -82,6 +89,8 @@ PokeNet.prototype.saveNet = function(path){
 			var attacker = gameState.sides[mySID].active[0];
 			var defender = gameState.sides[1-mySID].active[0];
 		  var damage = gameState.getDamage(attacker, defender, moves[i], null);
+			console.log(maxDmgU);
+			console.log('Max Damage ^');
 			if(damage>maxDmgU){
 				maxDmgU = damage;
 			}
@@ -213,7 +222,7 @@ PokeNet.prototype.saveNet = function(path){
 
 		//let boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
 		//stats
-		phi.push(oppActive.baseStats.hp);
+		phi.push(oppActive.hp);
 		//if(oppPoke.boosts['atk']>=0) {
 		//	var boost
 		phi.push(oppActive.baseStats.atk);
@@ -226,7 +235,7 @@ PokeNet.prototype.saveNet = function(path){
 		for(var i=0; i<6; i++){
 			if(oppPoke.length>i){
 				if(oppPoke[i].species!=oppActive.species) {
-					phi.push(oppPoke[i].baseStats.hp);
+					phi.push(oppPoke[i].hp);
 					phi.push(oppPoke[i].baseStats.atk);
 					phi.push(oppPoke[i].baseStats.def);
 					phi.push(oppPoke[i].baseStats.spa);
@@ -240,8 +249,7 @@ PokeNet.prototype.saveNet = function(path){
 					}
 			}
 		}
-		console.log(ourActive.species);
-		phi.push(ourActive.baseStats.hp);
+		phi.push(ourActive.hp);
 		phi.push(ourActive.baseStats.atk);
 		phi.push(ourActive.baseStats.def);
 		phi.push(ourActive.baseStats.spa);
@@ -249,13 +257,14 @@ PokeNet.prototype.saveNet = function(path){
 		phi.push(ourActive.baseStats.spe);
 
 		for(var i=0; i<poke.length; i++){
-			if(poke[i].species!=ourActive.species)
-				phi.push(poke[i].baseStats.hp);
+			if(poke[i].species!=ourActive.species){
+				phi.push(poke[i].hp);
 				phi.push(poke[i].baseStats.atk);
 				phi.push(poke[i].baseStats.def);
 				phi.push(poke[i].baseStats.spa);
 				phi.push(poke[i].baseStats.spd);
 				phi.push(poke[i].baseStats.spe);
+			}
 		}
 
 //status
@@ -469,7 +478,19 @@ PokeNet.prototype.saveNet = function(path){
 
 	PokeNet.prototype.evaluate = function(gameState, mySID){
 		var vecta = this.featurizeState(gameState, mySID);
-		console.log('featurizeState finished');
+		var count = 0;
+		var exporti = this.net.toJSON();
+		for(var i = 0; i < exporti.neurons.length; i++){
+			if(exporti.neurons[i].layer == 'input'){
+				count++;
+			}
+		}
+		console.log(count);
+		console.log(vecta.length);
+		for(var i = 100; i < 150; i++) {
+			console.log(vecta[i]);
+		}
+		console.log(this.net.activate(vecta));
 		return this.net.activate(vecta);
 	}
 /* class PokeNet {
