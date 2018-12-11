@@ -303,7 +303,7 @@ class InterfaceLayer {
         else if (tag == 'tier') {
             this.format = arr[2];
         }
-        
+
         else if (tag == "request" && arr[2] != undefined && arr[2] != '' && arr[2] != null) { // |request|{"active":[{"moves":[{"move":"Night Slash","id":"nightslash","pp":24,"maxpp":24,"target":"normal","disabled":false},...
             var requestData = JSON.parse(arr[2]); //this is basically bot's team
 
@@ -847,7 +847,7 @@ class InterfaceLayer {
         // -detailschange is irrelevant here.  No ubers means no primal means no detailchanges
         else if (tag == 'detailschange') {
         	var sps = arr[3].split(', ')[0];
-        	if (arr[2].startsWith(this.mySide)) {
+        	if (arr[2].startsWith(this.mySide)&&this.battle.sides[this.mySID].active[0]!=null) {
         		this.battle.sides[this.mySID].active[0].species = sps;
         		var activePoke = this.battle.sides[this.mySID].active[0];
 

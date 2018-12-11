@@ -37,7 +37,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.nextID = '';
 	this.successfulLogin = false;
 	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNetNight1.json');
+	this.net = new PokeNet.PokeNet('pokeNetRound7.json', false);
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
@@ -176,7 +176,7 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
 		this.net.learn(room.episode, room.bot.mySID, 1);
-		this.net.saveNet('pokeNetNight2.json');
+		this.net.saveNet('pokeNetRound8.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -285,7 +285,7 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 5) {
+					if (this.NOOFROOMS < 8) {
 						this.startRandomBattle();
 					}
 				}

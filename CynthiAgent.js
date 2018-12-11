@@ -141,7 +141,13 @@ function CynthiAgent() {
 			}
 			else { //otherwise, check all possible moves. temporarily doesn't work for now. will be revisited
 				for (var i = 0; i < MoveSets[toId(attacker.name)].randomBattleMoves.length; i++) {
-					var moveid = MoveSets[toId(attacker.species)].randomBattleMoves[i]; //this is only a move id
+					var moveid = null;
+					if(MoveSets[toId(attacker.species)].randomBattleMoves!=null){
+						moveid = MoveSets[toId(attacker.species)].randomBattleMoves[i]; //this is only a move id
+					}
+					else{
+						moveid = 'strength';
+					}
 					var move = gameState.getMove(moveid);
 					//if (log) console.log(gameState.getMove(move));
 

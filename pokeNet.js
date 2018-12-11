@@ -17,10 +17,10 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 //================================================================
 //================   INTERFACE   =================================
 
-function PokeNet(netPath){
+function PokeNet(netPath, makeNew){
 	this.file = netPath;
-	this.net = new Synaptic.Architect.Perceptron(150, 20, 1);
-	if(this.readNet()){
+	this.net = new Synaptic.Architect.Perceptron(198, 20, 1);
+	if(!makeNew && this.readNet()){
 		this.net = Synaptic.Network.fromJSON(dataEx);
 	}
 	//TODO: 20 is a magic number, pulled out me hat
@@ -55,7 +55,6 @@ PokeNet.prototype.saveNet = function(path){
 //==================   FEATURES  ===============================
 // Feature construction!
 	PokeNet.prototype.featurizeState = function(gameState, mySID){
-		console.log('ey yo babes lone digger');
 		//TODO: Featurize
 		var phi = [];
 		//getting opponent highest dmg move
@@ -67,9 +66,7 @@ PokeNet.prototype.saveNet = function(path){
 			if(oppMoves.length>i){
 				var attacker = gameState.sides[1-mySID].active[0];
 				var defender = gameState.sides[mySID].active[0];
-				console.log('myster function entered');
 				var damage = gameState.getDamage(attacker, defender, oppMoves[i], null);
-				console.log('succeeded in getdamage');
 			}
 			if(damage>maxDmg){
 				maxDmg = damage;
@@ -92,9 +89,7 @@ PokeNet.prototype.saveNet = function(path){
 		}
 		phi.push(maxDmgU)
 		//types
-		console.log('its the fuckin for loop');
 		for(var i=0; i<18; i++){
-			console.log('iteration');
 			if(i==0 && gameState.sides[1-mySID].active[0].types.includes("Grass")){
 				phi.push(1);
 			}
@@ -153,7 +148,6 @@ PokeNet.prototype.saveNet = function(path){
 				phi.push(0);
 			}
 		}
-		console.log('ey yo babes 1');
 		for(var i=0; i<18; i++){
 			if(i==0 && gameState.sides[mySID].active[0].types.includes("Grass")){
 				phi.push(1);
