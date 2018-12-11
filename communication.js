@@ -2,6 +2,7 @@ var request = require('request');
 var util = require('./util');
 // gamestate simulation
 var CynthiAgent = require('./cynthiagent.js').CynthiAgent;
+var PokAImonAgent = require('./pokaimonagent.js').PokAImonAgent;
 var Perspective = require('./interfacelayer.js').InterfaceLayer;
 var PokeNet = require('./pokeNet.js');
 //helper functions
@@ -395,7 +396,8 @@ var Room = function(roomtitle, botvsuser, userID) {
 	this.roomNumber = roomParts[2];
 	this.battleType = roomParts[1];
 	this.cynthiagent = new CynthiAgent();
-	this.bot = new Perspective('Local room', userID, null, this.cynthiagent);
+	this.pokaimonagent = new PokAImonAgent();
+	this.bot = new Perspective('Local room', userID, null, this.pokaimonagent);
 	this.forceSwitch = false;
 	this.episode = [];
 };
