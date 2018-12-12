@@ -3739,3 +3739,6 @@ You win!
 
 evilrobo2 vs. CanInACanCan
 You win!
+
+KarpKarpMagi vs. evilrobo2
+You lose!
