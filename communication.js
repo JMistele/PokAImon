@@ -18,7 +18,7 @@ var sockjs = require('sockjs-client-ws');
 //default ID that the bot will use to login
 var ID = require('./userID.js').ID;
 
-var Opp = ""
+var Opp = "evilrobob"
 
 var Bot = function(){
 };
@@ -74,9 +74,9 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 	}
 };
 //reserved for testing the performance of the bot
-Bot.prototype.startTesting = function(id, pword, opp) {
-	this.setID('id', 'pword', 'gen7randombattle');
-	Opp = opp;
+Bot.prototype.startTesting = function() {
+	this.setID('evilroboA', 'cs221', 'gen7randombattle');
+	console.log(Opp);
 };
 
 Bot.prototype.createShowdownServer = function() {
@@ -117,7 +117,7 @@ Bot.prototype.login = function() {
 
 	//send POST request to login server
 	request.post({
-		url : 'http://localhost:8000',
+		url : 'http://play.pokemonshowdown.com/action.php',
 		form : {
 			act: 'login',
 			name: loginname,
@@ -128,7 +128,7 @@ Bot.prototype.login = function() {
 		//upon receiving a message from server after POST req is sent, this function will run
 		function (err, response, body) {
 			var data = util.safeJSON(body);
-			let _request = "|/trn " + 'evilroboB' + ",0," + data.assertion;
+			let _request = "|/trn " + loginname + ",0," + data.assertion;
 			client.write(_request); //send assertion to server to confirm login
 			//client.write("|/avatar 260"); //set sprite to Cynthia
 		}
@@ -261,7 +261,7 @@ Bot.prototype.processMessage = function(message) {
 			console.log("huh");
 			//turn off auto accepting challenge for now
 			if(typeof challengesFrom !== 'undefined'){
-				this.client.write("|/accept " + 'evilrobob');
+				this.client.write("|/accept " + Opp);
 			}
 			/**
 			if (challenge.challengesFrom != null) {
@@ -303,7 +303,7 @@ Bot.prototype.processMessage = function(message) {
 				if (this.onTestingMode) {
 					if (this.NOOFROOMS < 1) {
 						//this.startRandomBattle();
-						this.client.write("|/challenge " + 'evilroboB' + ", gen7randombattle");
+						this.client.write("|/challenge " + Opp + ", gen7randombattle");
 						this.client.write(roomtitle+"|/accept");
 					}
 				}
@@ -331,10 +331,10 @@ Bot.prototype.processMessage = function(message) {
 					if (this.onTestingMode) {
 						sleep(15000);
 						this.client.write('|/utm null');
-						this.client.write("|/challenge " + 'evilroboB' + ", gen7randombattle");
+						this.client.write("|/challenge " + Opp + ", gen7randombattle");
 						sleep(1000);
 						this.client.write('|/utm null');
-						this.client.write("|/accept " + 'evilroboB');
+						this.client.write("|/accept " + Opp);
 						//this.client.write('|/search gen7randombattle');
 					}
 					// TODOJOHN: Send episode to PokeNet

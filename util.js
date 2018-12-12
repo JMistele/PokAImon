@@ -2,11 +2,7 @@
 module.exports.safeJSON = function(data) {
 	if (data.length < 1) return;
 	if (data[0] == ']') data = data.substr(1);
-	console.log("DATA ==================")
-	console.log(data);
-	console.log('DATA ==================')
 	return JSON.parse(data);
-
 }
 
 // Sanitizes a Room name

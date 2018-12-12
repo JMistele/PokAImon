@@ -4,6 +4,7 @@ var communication = require('./communication');
 var bot = new communication.Bot();
 
 bot.initializeBot();
+bot.startTesting("evilroboa",'cs221','evilrobo1');
 
 /*
 //create server
