@@ -71,10 +71,10 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 		this.login();
 	}
 };
-
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID('greedyBaseline', 'cs221', 'gen7randombattle');
+	this.setID('evilroboB', 'cs221', 'gen7randombattle');
+
 };
 
 Bot.prototype.createShowdownServer = function() {
@@ -248,6 +248,7 @@ Bot.prototype.processMessage = function(message) {
 		else if (msg.includes("updatechallenges")) { //acepting challenges from others
 			var challenge = JSON.parse(parts[1]);
 			//turn off auto accepting challenge for now
+				//this.client.write("|/challenge " + 'evilroboa' + ", gen7randombattle");
 			/**
 			if (challenge.challengesFrom != null) {
 				var challengeobj = Object.keys(challenge.challengesFrom);
@@ -270,8 +271,8 @@ Bot.prototype.processMessage = function(message) {
 					this.client.write('|/reject ' + challenger);
 				}
 			}
-
 			**/
+
 		}
 
 		if (parts[0].includes("battle")) {
@@ -286,8 +287,9 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 10) {
-						this.startRandomBattle();
+					if (this.NOOFROOMS < 1) {
+						//this.startRandomBattle();
+						this.client.write("|/challenge " + 'evilroboa' + ", gen7randombattle");
 					}
 				}
 			}
@@ -313,7 +315,8 @@ Bot.prototype.processMessage = function(message) {
 					//on testingmode
 					if (this.onTestingMode) {
 						this.client.write('|/utm null');
-						this.client.write('|/search gen7randombattle');
+						this.client.write("|/challenge " + 'evilroboa' + ", gen7randombattle");
+						//this.client.write('|/search gen7randombattle');
 					}
 					// TODOJOHN: Send episode to PokeNet
 
