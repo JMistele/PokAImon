@@ -18,6 +18,8 @@ var sockjs = require('sockjs-client-ws');
 //default ID that the bot will use to login
 var ID = require('./userID.js').ID;
 
+var Opp = ""
+
 var Bot = function(){
 };
 
@@ -72,9 +74,9 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 	}
 };
 //reserved for testing the performance of the bot
-Bot.prototype.startTesting = function() {
-	this.setID('evilroboA', 'cs221', 'gen7randombattle');
-
+Bot.prototype.startTesting = function(id, pword, opp) {
+	this.setID('id', 'pword', 'gen7randombattle');
+	Opp = opp;
 };
 
 Bot.prototype.createShowdownServer = function() {
@@ -327,9 +329,10 @@ Bot.prototype.processMessage = function(message) {
 
 					//on testingmode
 					if (this.onTestingMode) {
+						sleep(15000);
 						this.client.write('|/utm null');
 						this.client.write("|/challenge " + 'evilroboB' + ", gen7randombattle");
-						sleep(1000)
+						sleep(1000);
 						this.client.write('|/utm null');
 						this.client.write("|/accept " + 'evilroboB');
 						//this.client.write('|/search gen7randombattle');
