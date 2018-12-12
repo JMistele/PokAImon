@@ -73,7 +73,7 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 };
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID('evilroboB', 'cs221', 'gen7randombattle');
+	this.setID('evilroboA', 'cs221', 'gen7randombattle');
 
 };
 
@@ -177,7 +177,7 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
 		this.net.learn(room.episode, room.bot.mySID, 1);
-		this.net.saveNet('pokeNetRound11.json');
+		this.net.saveNet('pokeNetRoboA1.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -193,6 +193,15 @@ function forceSwitchCheck(message) {
 		}
 	}
 	return false;
+}
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
 }
 
 Bot.prototype.processMessage = function(message) {
@@ -245,10 +254,13 @@ Bot.prototype.processMessage = function(message) {
 			}
 		}
 
-		else if (msg.includes("updatechallenges")) { //acepting challenges from others
-			var challenge = JSON.parse(parts[1]);
+		else if (parts[0].includes("updatechallenges")) { //acepting challenges from others
+			var challengesFrom = JSON.parse(parts[1]).challengesFrom;
+			console.log("huh");
 			//turn off auto accepting challenge for now
-				//this.client.write("|/challenge " + 'evilroboa' + ", gen7randombattle");
+			if(typeof challengesFrom !== 'undefined'){
+				this.client.write("|/accept " + 'evilrobob');
+			}
 			/**
 			if (challenge.challengesFrom != null) {
 				var challengeobj = Object.keys(challenge.challengesFrom);
@@ -289,7 +301,8 @@ Bot.prototype.processMessage = function(message) {
 				if (this.onTestingMode) {
 					if (this.NOOFROOMS < 1) {
 						//this.startRandomBattle();
-						this.client.write("|/challenge " + 'evilroboa' + ", gen7randombattle");
+						this.client.write("|/challenge " + 'evilroboB' + ", gen7randombattle");
+						this.client.write(roomtitle+"|/accept");
 					}
 				}
 			}
@@ -315,7 +328,10 @@ Bot.prototype.processMessage = function(message) {
 					//on testingmode
 					if (this.onTestingMode) {
 						this.client.write('|/utm null');
-						this.client.write("|/challenge " + 'evilroboa' + ", gen7randombattle");
+						this.client.write("|/challenge " + 'evilroboB' + ", gen7randombattle");
+						sleep(1000)
+						this.client.write('|/utm null');
+						this.client.write("|/accept " + 'evilroboB');
 						//this.client.write('|/search gen7randombattle');
 					}
 					// TODOJOHN: Send episode to PokeNet

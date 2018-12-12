@@ -3658,3 +3658,78 @@ You win!
 
 kikinene vs. greedyBaseline
 You win!
+
+evilrobobB vs. evilroboA
+You win!
+
+evilroboB vs. evilroboA
+You win!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboA vs. evilroboB
+You lose!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboA vs. evilroboB
+You lose!
+
+evilroboB vs. evilroboA
+You win!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboB vs. evilroboA
+You win!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboA vs. evilroboB
+You win!
+
+evilroboA vs. evilroboB
+You win!
+
+evilroboA vs. evilroboB
+You win!
+
+evilroboA vs. evilroboB
+You lose!
+
+evilroboB vs. evilroboA
+You win!
+
+evilroboA vs. evilroboB
+You lose!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboB vs. evilroboA
+You lose!
+
+evilroboA vs. evilroboB
+You win!
+
+evilroboB vs. evilroboA
+You lose!
