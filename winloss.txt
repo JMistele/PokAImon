@@ -3733,3 +3733,9 @@ You win!
 
 evilroboB vs. evilroboA
 You lose!
+
+evilroboA vs. imreallydonot
+You win!
+
+evilrobo2 vs. CanInACanCan
+You win!

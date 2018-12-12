@@ -18,7 +18,7 @@ var sockjs = require('sockjs-client-ws');
 //default ID that the bot will use to login
 var ID = require('./userID.js').ID;
 
-var Opp = "evilrobo12"
+var Opp = "evilrobo17"
 
 var Bot = function(){
 };
@@ -40,7 +40,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.nextID = '';
 	this.successfulLogin = false;
 	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNetRoboA1.json', false);
+	this.net = new PokeNet.PokeNet('pokeNetNight2.json', true);
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
@@ -75,7 +75,7 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 };
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID('evilrobo2', 'cs221', 'gen7randombattle');
+	this.setID('evilrobo7', 'cs221', 'gen7randombattle');
 	console.log(Opp);
 };
 
@@ -179,7 +179,7 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
 		this.net.learn(room.episode, room.bot.mySID, 1);
-		this.net.saveNet('pokeNetRoboA2.json');
+		this.net.saveNet('pokeNetRoboA1.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;

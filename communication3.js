@@ -18,7 +18,7 @@ var sockjs = require('sockjs-client-ws');
 //default ID that the bot will use to login
 var ID = require('./userID.js').ID;
 
-var Opp = "evilrobo12"
+var Opp = "evilrobo13"
 
 var Bot = function(){
 };
@@ -75,7 +75,7 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 };
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID('evilrobo2', 'cs221', 'gen7randombattle');
+	this.setID('evilrobo3', 'cs221', 'gen7randombattle');
 	console.log(Opp);
 };
 
