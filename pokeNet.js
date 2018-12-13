@@ -45,6 +45,26 @@ PokeNet.prototype.readNet = function(){
 	})
 };
 
+function boostStat(baseStat, statname, boost){
+	console.log('preBoost==========');
+	console.log(statname+ '     'baseStat);
+  console.log('BOOST=============');
+	console.log(boost);
+
+	stat = baseStat;
+	let boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
+	if (boost > 6) boost = 6;
+	if (boost < -6) boost = -6;
+	if (boost >= 0) {
+		stat = Math.floor(stat * boostTable[boost]);
+	} else {
+		stat = Math.floor(stat / boostTable[-boost]);
+	}
+	console.log('POST BOOST=============');
+	console.log(stat);
+	return stat;
+}
+
 PokeNet.prototype.saveNet = function(path){
 		var exported = this.net.toJSON();
 		var exportString = JSON.stringify(exported);
@@ -211,16 +231,24 @@ PokeNet.prototype.saveNet = function(path){
 		var ourActive = gameState.sides[mySID].active[0];
 		var oppActive = gameState.sides[1-mySID].active[0];
 
-		//let boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
 		//stats
+		//Opponent Boosts
 		phi.push(oppActive.hp);
-		//if(oppPoke.boosts['atk']>=0) {
-		//	var boost
-		phi.push(oppActive.baseStats.atk);
-		phi.push(oppActive.baseStats.def);
-		phi.push(oppActive.baseStats.spa);
-		phi.push(oppActive.baseStats.spd);
-		phi.push(oppActive.baseStats.spe);
+		if(oppActive != null){
+			oppBoost = oppActive.boosts;
+			phi.push(boostStat(oppActive.baseStats.atk,"atk",oppBoost['atk']));
+			phi.push(boostStat(oppActive.baseStats.def,"def",oppBoost['def']));
+			phi.push(boostStat(oppActive.baseStats.spa,"spa",oppBoost['spa']));
+			phi.push(boostStat(oppActive.baseStats.spd,"spd",oppBoost['spd']));
+			phi.push(boostStat(oppActive.baseStats.spe,"spe",oppBoost['spe']));
+		}
+		else{
+			phi.push(oppActive.baseStats.atk);
+			phi.push(oppActive.baseStats.def);
+			phi.push(oppActive.baseStats.spa);
+			phi.push(oppActive.baseStats.spd);
+			phi.push(oppActive.baseStats.spe);
+		}
 
 		//Adds six stats per loop
 		for(var i=0; i<6; i++){
@@ -240,12 +268,24 @@ PokeNet.prototype.saveNet = function(path){
 					}
 			}
 		}
+
+		//ourBoosts
 		phi.push(ourActive.hp);
-		phi.push(ourActive.baseStats.atk);
-		phi.push(ourActive.baseStats.def);
-		phi.push(ourActive.baseStats.spa);
-		phi.push(ourActive.baseStats.spd);
-		phi.push(ourActive.baseStats.spe);
+		if(ourActive != null){
+			ourBoost = oppActive.boosts;
+			phi.push(boostStat(ourActive.baseStats.atk,"atk",ourBoost['atk']));
+			phi.push(boostStat(ourActive.baseStats.def,"def",ourBoost['def']));
+			phi.push(boostStat(ourActive.baseStats.spa,"spa",ourBoost['spa']));
+			phi.push(boostStat(ourActive.baseStats.spd,"spd",ourBoost['spd']));
+			phi.push(boostStat(ourActive.baseStats.spe,"spe",ourBoost['spe']));
+		}
+		else{
+			phi.push(ourActive.baseStats.atk);
+			phi.push(ourActive.baseStats.def);
+			phi.push(ourActive.baseStats.spa);
+			phi.push(ourActive.baseStats.spd);
+			phi.push(ourActive.baseStats.spe);
+		}
 
 		for(var i=0; i<poke.length; i++){
 			if(poke[i].species!=ourActive.species){

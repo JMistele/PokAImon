@@ -422,7 +422,7 @@ var Room = function(roomtitle, botvsuser, userID) {
 	this.battleType = roomParts[1];
 	this.cynthiagent = new CynthiAgent();
 	this.pokaimonagent = new PokAImonAgent();
-	this.bot = new Perspective('Local room', userID, null, this.pokaimonagent);
+	this.bot = new Perspective('Local room', userID, null, this.cynthiagent);
 	this.forceSwitch = false;
 	this.episode = [];
 };
