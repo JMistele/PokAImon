@@ -46,12 +46,7 @@ PokeNet.prototype.readNet = function(){
 };
 
 function boostStat(baseStat, statname, boost){
-	console.log('preBoost==========');
-	console.log(statname+ '     'baseStat);
-  console.log('BOOST=============');
-	console.log(boost);
-
-	stat = baseStat;
+	var stat = baseStat;
 	let boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
 	if (boost > 6) boost = 6;
 	if (boost < -6) boost = -6;
@@ -60,8 +55,6 @@ function boostStat(baseStat, statname, boost){
 	} else {
 		stat = Math.floor(stat / boostTable[-boost]);
 	}
-	console.log('POST BOOST=============');
-	console.log(stat);
 	return stat;
 }
 
@@ -235,7 +228,7 @@ PokeNet.prototype.saveNet = function(path){
 		//Opponent Boosts
 		phi.push(oppActive.hp);
 		if(oppActive != null){
-			oppBoost = oppActive.boosts;
+			var oppBoost = oppActive.boosts;
 			phi.push(boostStat(oppActive.baseStats.atk,"atk",oppBoost['atk']));
 			phi.push(boostStat(oppActive.baseStats.def,"def",oppBoost['def']));
 			phi.push(boostStat(oppActive.baseStats.spa,"spa",oppBoost['spa']));
@@ -272,7 +265,7 @@ PokeNet.prototype.saveNet = function(path){
 		//ourBoosts
 		phi.push(ourActive.hp);
 		if(ourActive != null){
-			ourBoost = oppActive.boosts;
+			var ourBoost = oppActive.boosts;
 			phi.push(boostStat(ourActive.baseStats.atk,"atk",ourBoost['atk']));
 			phi.push(boostStat(ourActive.baseStats.def,"def",ourBoost['def']));
 			phi.push(boostStat(ourActive.baseStats.spa,"spa",ourBoost['spa']));
@@ -510,7 +503,7 @@ PokeNet.prototype.saveNet = function(path){
 
 
 	PokeNet.prototype.evaluate = function(gameState, mySID){
-		if(gamestate == null) {
+		if(gameState == null) {
 			console.log("GAMESTATE WAS NULL BREAKING NOW ===============");
 			return 0;
 		}
