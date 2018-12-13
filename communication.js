@@ -179,7 +179,7 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
 		this.net.learn(room.episode, room.bot.mySID, 1);
-		this.net.saveNet('pokeNetRoboA8.json');
+		this.net.saveNet('pokeNetPokAI1.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -422,7 +422,7 @@ var Room = function(roomtitle, botvsuser, userID) {
 	this.battleType = roomParts[1];
 	this.cynthiagent = new CynthiAgent();
 	this.pokaimonagent = new PokAImonAgent();
-	this.bot = new Perspective('Local room', userID, null, this.cynthiagent);
+	this.bot = new Perspective('Local room', userID, null, this.pokaimonagent);
 	this.forceSwitch = false;
 	this.episode = [];
 };
