@@ -329,13 +329,14 @@ Bot.prototype.processMessage = function(message) {
 
 					//on testingmode
 					if (this.onTestingMode) {
-						sleep(15000);
 						this.client.write('|/utm null');
 						this.client.write("|/challenge " + Opp + ", gen7randombattle");
+						/*
 						sleep(1000);
 						this.client.write('|/utm null');
 						this.client.write("|/accept " + Opp);
 						//this.client.write('|/search gen7randombattle');
+						*/
 					}
 					// TODOJOHN: Send episode to PokeNet
 

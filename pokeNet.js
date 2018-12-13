@@ -435,8 +435,9 @@ PokeNet.prototype.saveNet = function(path){
 		for(var i = 0; i < stateArray.length; i++){
 			//console.log(this.net);
 			var vecta = this.featurizeState(stateArray[i], mySID)
-			this.net.activate(vecta);
-			this.net.propagate(learningRate, [rewardArray[i]]);
+			if(!isNaN(this.net.activate(vecta))){
+				this.net.propagate(learningRate, [rewardArray[i]]);
+			}
 		}
 	};
 
@@ -469,7 +470,17 @@ PokeNet.prototype.saveNet = function(path){
 
 
 	PokeNet.prototype.evaluate = function(gameState, mySID){
+		if(gamestate == null) {
+			console.log("GAMESTATE WAS NULL BREAKING NOW ===============");
+			return 0;
+		}
 		var vecta = this.featurizeState(gameState, mySID);
+		for(var i=0; i<vecta.length; i++){
+			if(vecta[i]==null || typeof vecta[i] === 'undefined'){
+					console.log("FEATURE VECTOR MACHINE BROKE ===========")
+					return 0;
+			}
+		}
 		return this.net.activate(vecta);
 	}
 /* class PokeNet {

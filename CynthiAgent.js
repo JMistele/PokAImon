@@ -868,6 +868,9 @@ function CynthiAgent() {
                 }
                 else {
                 	console.log('Item: '+ item + ' line 765')
+									if(bestScoreAction.length ==0) {
+										bestScoreAction.push('move')
+									}
                 	if ((item.endsWith('ite') || item.endsWith('itex') || item.endsWith('itey')) && bestScoreAction[0].startsWith('move')) {
                 		if (item != 'eviolite') {
                 			console.log('Mega item: '+item);
