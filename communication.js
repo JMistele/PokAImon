@@ -40,7 +40,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.nextID = '';
 	this.successfulLogin = false;
 	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNet189PokAILinear4.json', false);
+	this.net = new PokeNet.PokeNet('pokeNet189PokAILinear8.json', true);
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
@@ -178,8 +178,8 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	var room = this.ROOMS[rmnumber];
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
-		this.net.learn(room.episode, room.bot.mySID, .9)
-		this.net.saveNet('pokeNet189PokAILinear5.json');
+		this.net.learn(room.episode, room.bot.mySID, .001)
+		this.net.saveNet('pokeNetTheLastHope.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;

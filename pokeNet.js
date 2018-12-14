@@ -227,7 +227,7 @@ PokeNet.prototype.saveNet = function(path){
 
 		//stats
 		//Opponent Boosts
-		phi.push(oppActive.hp/oppActive.maxhp/200);
+		phi.push(oppActive.hp/oppActive.maxhp);
 		if(oppActive != null){
 			var oppBoost = oppActive.boosts;
 			phi.push(boostStat(oppActive.baseStats.atk,"atk",oppBoost['atk'])/200);
@@ -248,7 +248,7 @@ PokeNet.prototype.saveNet = function(path){
 		for(var i=0; i<6; i++){
 			if(i < oppPoke.length){
 				if(oppPoke[i].species!=oppActive.species) {
-					phi.push(oppPoke[i].hp/oppPoke[i].maxhp/200);
+					phi.push(oppPoke[i].hp/oppPoke[i].maxhp);
 					phi.push(oppPoke[i].baseStats.atk/200);
 					phi.push(oppPoke[i].baseStats.def/200);
 					phi.push(oppPoke[i].baseStats.spa/200);
@@ -264,7 +264,7 @@ PokeNet.prototype.saveNet = function(path){
 		}
 
 		//ourBoosts
-		phi.push(ourActive.hp/ourActive.maxhp/200);
+		phi.push(ourActive.hp/ourActive.maxhp);
 		if(ourActive != null){
 			var ourBoost = oppActive.boosts;
 			phi.push(boostStat(ourActive.baseStats.atk,"atk",ourBoost['atk'])/200);
@@ -283,7 +283,7 @@ PokeNet.prototype.saveNet = function(path){
 
 		for(var i=0; i<poke.length; i++){
 			if(poke[i].species!=ourActive.species){
-				phi.push(poke[i].hp/poke[i].maxhp/200);
+				phi.push(poke[i].hp/poke[i].maxhp);
 				phi.push(poke[i].baseStats.atk/200);
 				phi.push(poke[i].baseStats.def/200);
 				phi.push(poke[i].baseStats.spa/200);
