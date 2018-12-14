@@ -85,86 +85,110 @@ function PokAImonAgent() {
 	 return myNet.evaluate(gameState, mySID);
 	}
 
-  this.decide = function (gameState, options, mySide, forceSwitch, myNet) {
-
-		var mySID = mySide.n;
-		console.log('My SID');
-		console.log(mySID);
-		var choices = this.getOptions(gameState, mySID);
-		console.log(choices.length);
-		if(choices==null){
-			console.log('ah rip');
-			choices = this.getOptions(gameState, mySID);
-			console.log(choices.length);
-		}
-		//if need to switch
+	this.decide = function (gameState, options, mySide, forceSwitch, myNet) {
+				var fakePhi = [];
+				for(var i = 0; i < 189; i++){
+					fakePhi.push(1);
+				}
+				console.log(myNet.net.activate(fakePhi));
+				var fakePhi = [];
+				for(var i = 0; i < 189; i++){
+					fakePhi.push(500);
+				}
+				console.log(myNet.net.activate(fakePhi));
+				var fakePhi = [];
+				for(var i = 0; i < 189; i++){
+					fakePhi.push(.1);
+				}
+				console.log(myNet.net.activate(fakePhi));
+				var fakePhi = [];
+				for(var i = 0; i < 189; i++){
+					fakePhi.push(-1);
+				}
+				console.log(myNet.net.activate(fakePhi));
+        var mySID = mySide.n;
+        console.log('My SID');
+        console.log(mySID);
+        //FROM CYNTHIAI
+        if (options.constructor === Object) { //basically if it is an object, make it an array
+            var options = Object.keys(options);
+        }
+        var choices = options;
+        //Just fucking pray
+        // if(!(choices.length > 0)){
+        //     throw "options failure.";
+        // }
+        if(choices==null){
+            console.log('ah rip');
+            choices = this.getOptions(gameState, mySID);
+            console.log(choices.length);
+        }
+        //if need to switch
     if(forceSwitch) {
-				var newOptions = [];
-				for(var i=0; i<choices.length; i++) {
-						if(choices[i].includes("switch")) {
-								newOptions.push(choices[i]);
-						}
-				}
-				choices = newOptions;
-		}
-		var botSide = 'p'+(mySID+1);
-		var oppSide = 'p'+(2-mySID);
-		var bestAction = null;
-		var bestScore = -10
-		console.log(choices.length);
-		for(var i = 0; i<choices.length; i++) {
-			var action = choices[i];
-			var succState = gameState.copy();
-			succState.p1.currentRequest = 'move';
-			succState.p2.currentRequest = 'move';
-			if(forceSwitch){
-				succState.choose(oppSide, 'forceskip');
-				succState.choose(botSide, action);
-				succState.choose(botSide, action);
-				var score = this.stateScore(succState,mySID, myNet)
-				if(score > bestScore){
-					bestScore = score;
-					bestAction = action;
-				}
-			}
-			else{
-				var opponScore = 100;
-				var oppMoves = this.getOpponentActions(gameState,mySID);
-				var finalState = null;
-				for(var j=0; j<oppMoves.length; j++){
+                var newOptions = [];
+                for(var i=0; i<choices.length; i++) {
+                        if(choices[i].includes("switch")) {
+                                newOptions.push(choices[i]);
+                        }
+                }
+                choices = newOptions;
+        }
+        var botSide = 'p'+(mySID+1);
+        var oppSide = 'p'+(2-mySID);
+        var bestAction = null;
+        var bestScore = -10
+        for(var i = 0; i<choices.length; i++) {
+            var action = choices[i];
+            var succState = gameState.copy();
+            succState.p1.currentRequest = 'move';
+            succState.p2.currentRequest = 'move';
+            if(forceSwitch){
+                succState.choose(oppSide, 'forceskip');
+                succState.choose(botSide, action);
+                succState.choose(botSide, action);
+                var score = this.stateScore(succState,mySID, myNet)
+                if(score > bestScore){
+                    bestScore = score;
+                    bestAction = action;
+                }
+            }
+            else{
+                var opponScore = 100;
+                var oppMoves = this.getOpponentActions(gameState,mySID);
+                var finalState = null;
+                for(var j=0; j<oppMoves.length; j++){
 
-					/*
-					if (oppMoves[j].startsWith('move')) { //predict worst move when less than 2 moves have been revealed
-						var moveid = oppMoves[j].split(' ')[1];
-						if (succState.sides[1-mySID].active[0].moves.indexOf(moveid) == -1) {
-							this.addFakeMove(succState, moveid, mySID); //add fake move so that sim would work
-						}
-					}
-					*/
+                    /*
+                    if (oppMoves[j].startsWith('move')) { //predict worst move when less than 2 moves have been revealed
+                        var moveid = oppMoves[j].split(' ')[1];
+                        if (succState.sides[1-mySID].active[0].moves.indexOf(moveid) == -1) {
+                            this.addFakeMove(succState, moveid, mySID); //add fake move so that sim would work
+                        }
+                    }
+                    */
 
-					var oppState = succState.copy();
-					oppState.choose(oppSide, oppMoves[j]);
-					oppState.choose(botSide, action);
-					var oScore = this.stateScore(oppState, mySID, myNet);
-					console.log(oScore);
-					if(opponScore>oScore) {
-						opponScore = oScore;
-						finalState = oppState;
-						console.log('oppState changed');
-					}
-				}
-				var score = this.stateScore(finalState ,mySID, myNet);
-				if(score >bestScore){
-					bestScore = score;
-					bestAction = action;
-				}
-			}
-		}
-		console.log(bestAction);
-		if(bestAction == null){
-			console.log("SUCK MY DONKEY DICK");
-		}
-		return bestAction;
+                    var oppState = succState.copy();
+                    oppState.choose(oppSide, oppMoves[j]);
+                    oppState.choose(botSide, action);
+                    var oScore = this.stateScore(oppState, mySID, myNet);
+                    console.log(oScore);
+                    if(opponScore>oScore) {
+                        opponScore = oScore;
+                        finalState = oppState;
+                    }
+                }
+                var score = this.stateScore(finalState ,mySID, myNet);
+                if(score >bestScore){
+                    bestScore = score;
+                    bestAction = action;
+                }
+            }
+        }
+        console.log(bestAction);
+        if(bestAction == null){
+            console.log("RETURNED NULL AS BESTACTION ==============");
+        }
+        return bestAction;
   }
 	this.assumePokemon = function (pname, plevel, pgender, side) { //maybe add heuristics to predict certain poke's ability, item
 			var nSet = {

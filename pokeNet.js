@@ -19,30 +19,29 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 function PokeNet(netPath, makeNew){
 	this.file = netPath;
-	this.net = new Synaptic.Architect.Perceptron(188, 20, 1);
-	if(!makeNew && this.readNet()){
+	var inputLayer = new Synaptic.Layer(189);
+	var hiddenLayer = new Synaptic.Layer(1);
+	var outputLayer = new Synaptic.Layer(1);
+
+	inputLayer.project(hiddenLayer);
+	hiddenLayer.project(outputLayer);
+
+	this.net = new Synaptic.Network({
+		input: inputLayer,
+		hidden: [hiddenLayer],
+		output: outputLayer
+	});
+	var dataEx = this.readNet();
+	console.log(dataEx);
+	if(!makeNew && dataEx){
 		this.net = Synaptic.Network.fromJSON(dataEx);
 	}
 	//TODO: 20 is a magic number, pulled out me hat
 }
 
 PokeNet.prototype.readNet = function(){
-	var dataEx;
-	fs.readFile(this.file, function(err, data){
-		if(err) {
-			console.log(err);
-			return;
-		} else {
-			/*if(data[0] != '{'){
-				console.log('File is not a good net!');
-				return;
-			}*/
-			dataEx = JSON.parse(data);
-			console.log(dataEx);
-			console.log('net read');
-			return dataEx;
-		}
-	})
+	var data = fs.readFileSync(this.file);
+	return JSON.parse(data);
 };
 
 function boostStat(baseStat, statname, boost){
@@ -70,6 +69,8 @@ PokeNet.prototype.saveNet = function(path){
 	PokeNet.prototype.featurizeState = function(gameState, mySID){
 		//TODO: Featurize
 		var phi = [];
+		// Constant for bias
+		phi.push(1);
 		//getting opponent highest dmg move
 		var oppPoke= gameState.sides[1-mySID].pokemon;
 		var oppMoves = gameState.sides[1-mySID].active[0].moves;
@@ -226,68 +227,68 @@ PokeNet.prototype.saveNet = function(path){
 
 		//stats
 		//Opponent Boosts
-		phi.push(oppActive.hp);
+		phi.push(oppActive.hp/oppActive.maxhp/200);
 		if(oppActive != null){
 			var oppBoost = oppActive.boosts;
-			phi.push(boostStat(oppActive.baseStats.atk,"atk",oppBoost['atk']));
-			phi.push(boostStat(oppActive.baseStats.def,"def",oppBoost['def']));
-			phi.push(boostStat(oppActive.baseStats.spa,"spa",oppBoost['spa']));
-			phi.push(boostStat(oppActive.baseStats.spd,"spd",oppBoost['spd']));
-			phi.push(boostStat(oppActive.baseStats.spe,"spe",oppBoost['spe']));
+			phi.push(boostStat(oppActive.baseStats.atk,"atk",oppBoost['atk'])/200);
+			phi.push(boostStat(oppActive.baseStats.def,"def",oppBoost['def'])/200);
+			phi.push(boostStat(oppActive.baseStats.spa,"spa",oppBoost['spa'])/200);
+			phi.push(boostStat(oppActive.baseStats.spd,"spd",oppBoost['spd'])/200);
+			phi.push(boostStat(oppActive.baseStats.spe,"spe",oppBoost['spe'])/200);
 		}
 		else{
-			phi.push(oppActive.baseStats.atk);
-			phi.push(oppActive.baseStats.def);
-			phi.push(oppActive.baseStats.spa);
-			phi.push(oppActive.baseStats.spd);
-			phi.push(oppActive.baseStats.spe);
+			phi.push(oppActive.baseStats.atk/200);
+			phi.push(oppActive.baseStats.def/200);
+			phi.push(oppActive.baseStats.spa/200);
+			phi.push(oppActive.baseStats.spd/200);
+			phi.push(oppActive.baseStats.spe/200);
 		}
 
 		//Adds six stats per loop
 		for(var i=0; i<6; i++){
 			if(i < oppPoke.length){
 				if(oppPoke[i].species!=oppActive.species) {
-					phi.push(oppPoke[i].hp);
-					phi.push(oppPoke[i].baseStats.atk);
-					phi.push(oppPoke[i].baseStats.def);
-					phi.push(oppPoke[i].baseStats.spa);
-					phi.push(oppPoke[i].baseStats.spd);
-					phi.push(oppPoke[i].baseStats.spe);
+					phi.push(oppPoke[i].hp/oppPoke[i].maxhp/200);
+					phi.push(oppPoke[i].baseStats.atk/200);
+					phi.push(oppPoke[i].baseStats.def/200);
+					phi.push(oppPoke[i].baseStats.spa/200);
+					phi.push(oppPoke[i].baseStats.spd/200);
+					phi.push(oppPoke[i].baseStats.spe/200);
 				}
 			}
 			else{
 					for(var j=0; j<6; j++) {
-						phi.push(0);
+						phi.push(1);
 					}
 			}
 		}
 
 		//ourBoosts
-		phi.push(ourActive.hp);
+		phi.push(ourActive.hp/ourActive.maxhp/200);
 		if(ourActive != null){
 			var ourBoost = oppActive.boosts;
-			phi.push(boostStat(ourActive.baseStats.atk,"atk",ourBoost['atk']));
-			phi.push(boostStat(ourActive.baseStats.def,"def",ourBoost['def']));
-			phi.push(boostStat(ourActive.baseStats.spa,"spa",ourBoost['spa']));
-			phi.push(boostStat(ourActive.baseStats.spd,"spd",ourBoost['spd']));
-			phi.push(boostStat(ourActive.baseStats.spe,"spe",ourBoost['spe']));
+			phi.push(boostStat(ourActive.baseStats.atk,"atk",ourBoost['atk'])/200);
+			phi.push(boostStat(ourActive.baseStats.def,"def",ourBoost['def'])/200);
+			phi.push(boostStat(ourActive.baseStats.spa,"spa",ourBoost['spa'])/200);
+			phi.push(boostStat(ourActive.baseStats.spd,"spd",ourBoost['spd'])/200);
+			phi.push(boostStat(ourActive.baseStats.spe,"spe",ourBoost['spe'])/200);
 		}
 		else{
-			phi.push(ourActive.baseStats.atk);
-			phi.push(ourActive.baseStats.def);
-			phi.push(ourActive.baseStats.spa);
-			phi.push(ourActive.baseStats.spd);
-			phi.push(ourActive.baseStats.spe);
+			phi.push(ourActive.baseStats.atk/200);
+			phi.push(ourActive.baseStats.def/200);
+			phi.push(ourActive.baseStats.spa/200);
+			phi.push(ourActive.baseStats.spd/200);
+			phi.push(ourActive.baseStats.spe/200);
 		}
 
 		for(var i=0; i<poke.length; i++){
 			if(poke[i].species!=ourActive.species){
-				phi.push(poke[i].hp);
-				phi.push(poke[i].baseStats.atk);
-				phi.push(poke[i].baseStats.def);
-				phi.push(poke[i].baseStats.spa);
-				phi.push(poke[i].baseStats.spd);
-				phi.push(poke[i].baseStats.spe);
+				phi.push(poke[i].hp/poke[i].maxhp/200);
+				phi.push(poke[i].baseStats.atk/200);
+				phi.push(poke[i].baseStats.def/200);
+				phi.push(poke[i].baseStats.spa/200);
+				phi.push(poke[i].baseStats.spd/200);
+				phi.push(poke[i].baseStats.spe/200);
 			}
 		}
 
@@ -459,7 +460,6 @@ PokeNet.prototype.saveNet = function(path){
 					phi.push(0);
 				}
 		}
-		console.log(phi.length);
 		return phi;
 	};
 
@@ -479,25 +479,33 @@ PokeNet.prototype.saveNet = function(path){
 		// TD Learning: val[i] = r + gamma val[i+1]
 		// Baby gets bonus for doing fat damage
 		var rewardArray = [];
-		var gamma = .9;
-		for(var i = 0; i < stateArray.length - 1; i++){
-			var evalu = this.evaluate(stateArray[i+1], mySID);
-			rewardArray.push(.5 + gamma*(evalu - .5));
-		}
-		var endscore = .5;
+		var gamma = .95;
+		// Reward for kills ONLY
+		// Punish for deaths Only
+
+		// Endstate score.
+		var endscore = 0
 		var endState = stateArray[stateArray.length - 1];
 		// Score for remaining pokemon
 		for(var Poke in endState.sides[mySID].pokemon){
 			if(endState.sides[mySID].pokemon[Poke].hp > 0){
-				endscore += .08;
+				endscore = 1;
 			}
 		}
 		for(var Poke in endState.sides[1-mySID].pokemon){
 			if(endState.sides[1-mySID].pokemon[Poke].hp > 0){
-				endscore -= .08;
+				endscore = -1;
 			}
 		}
-		rewardArray.push(endscore);
+		endscore *= gamma;
+		rewardArray[stateArray.length - 1] = endscore;
+		for(var i = 1; i < stateArray.length; i++){
+			rewardArray[stateArray.length - i - 1] = rewardArray[stateArray.length - i]*gamma;
+		}
+		for(var i = 0; i < stateArray.length; i++){
+			rewardArray[i] = (rewardArray[i]+1)*.5
+		}
+		console.log(rewardArray);
 		return rewardArray;
 	}
 

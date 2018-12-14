@@ -40,7 +40,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.nextID = '';
 	this.successfulLogin = false;
 	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNetRoboA7.json', false);
+	this.net = new PokeNet.PokeNet('pokeNet189PokAILinear4.json', false);
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
@@ -178,8 +178,8 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	var room = this.ROOMS[rmnumber];
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
-		this.net.learn(room.episode, room.bot.mySID, 1);
-		this.net.saveNet('pokeNetPokAI1.json');
+		this.net.learn(room.episode, room.bot.mySID, .9)
+		this.net.saveNet('pokeNet189PokAILinear5.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -310,40 +310,8 @@ Bot.prototype.processMessage = function(message) {
 			}
 
 			else {
-				if (msg.includes('|win|')) {
-					var logStream = fs.createWriteStream('winloss.txt', {'flags': 'a'});
-					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
-					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
-					if (msg.includes(this.ID)) {
-						logStream.write('You win!\n');
 
-					}
-					else {
-						logStream.write('You lose!\n');
-					}
-					logStream.end('')
-					//Add gameState to room episode
-					this.ROOMS[roomtitle].episode.push(this.ROOMS[roomtitle].bot.battle);
-					this.client.write('|/leave ' + roomtitle);
-					this.removeRoom(roomtitle);
-
-					//on testingmode
-					if (this.onTestingMode) {
-						this.client.write('|/utm null');
-						this.client.write("|/challenge " + Opp + ", gen7randombattle");
-						sleep(1000);
-						if(this.NOOFROOMS<1){
-						this.client.write('|/utm null');
-						this.client.write("|/challenge " + Opp + ", gen7randombattle");
-						this.client.write('|/utm null');
-						this.client.write("|/accept " + Opp);
-						}
-						//this.client.write('|/search gen7randombattle');
-					}
-					// TODOJOHN: Send episode to PokeNet
-
-				}
-				else if (msg.includes('|l|') || msg.includes('|leave|')) {
+				if (msg.includes('|l|') || msg.includes('|leave|')) {
 					this.client.write(roomtitle+'|/timer on')
 				}
 				else {
@@ -393,7 +361,9 @@ Bot.prototype.processMessage = function(message) {
 					}
 					if (msg.indexOf('|turn|') > -1 ) {
 						//Add gameState to room episode
-						this.ROOMS[roomtitle].episode.push(bot.battle)
+						var newState = bot.battle.copy();
+
+						this.ROOMS[roomtitle].episode.push(newState);
 						var move;
 						if (bot.battle.sides[bot.mySID] !== null) {
 							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], false, this.net); //activate CynthiAgent
@@ -407,6 +377,40 @@ Bot.prototype.processMessage = function(message) {
 
 
 					}
+				}
+				if (msg.includes('|win|')) {
+					var logStream = fs.createWriteStream('winlossLinearLR4.txt', {'flags': 'a'});
+					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
+					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
+					if (msg.includes(this.ID)) {
+						logStream.write('You win!\n');
+
+					}
+					else {
+						logStream.write('You lose!\n');
+					}
+					logStream.end('')
+					//Add gameState to room episode
+					var newState = this.ROOMS[roomtitle].bot.battle.copy();
+					this.ROOMS[roomtitle].episode.push(newState);
+					this.client.write('|/leave ' + roomtitle);
+					this.removeRoom(roomtitle);
+
+					//on testingmode
+					if (this.onTestingMode) {
+						this.client.write('|/utm null');
+						this.client.write("|/challenge " + Opp + ", gen7randombattle");
+						sleep(1000);
+						if(this.NOOFROOMS<1){
+						this.client.write('|/utm null');
+						this.client.write("|/challenge " + Opp + ", gen7randombattle");
+						this.client.write('|/utm null');
+						this.client.write("|/accept " + Opp);
+						}
+						//this.client.write('|/search gen7randombattle');
+					}
+					// TODOJOHN: Send episode to PokeNet
+
 				}
 			}
 		}
@@ -422,7 +426,7 @@ var Room = function(roomtitle, botvsuser, userID) {
 	this.battleType = roomParts[1];
 	this.cynthiagent = new CynthiAgent();
 	this.pokaimonagent = new PokAImonAgent();
-	this.bot = new Perspective('Local room', userID, null, this.cynthiagent);
+	this.bot = new Perspective('Local room', userID, null, this.pokaimonagent);
 	this.forceSwitch = false;
 	this.episode = [];
 };
