@@ -103,6 +103,7 @@ PokeNet.prototype.saveNet = function(path){
 		}
 		phi.push(maxDmgU)
 		//types
+		/*
 		for(var i=0; i<18; i++){
 			if(i==0 && gameState.sides[1-mySID].active[0].types.includes("Grass")){
 				phi.push(1);
@@ -221,7 +222,7 @@ PokeNet.prototype.saveNet = function(path){
 				phi.push(0);
 			}
 		}
-
+		*/
 		var ourActive = gameState.sides[mySID].active[0];
 		var oppActive = gameState.sides[1-mySID].active[0];
 
@@ -460,6 +461,7 @@ PokeNet.prototype.saveNet = function(path){
 					phi.push(0);
 				}
 		}
+		console.log(phi.length)
 		return phi;
 	};
 
@@ -485,13 +487,13 @@ PokeNet.prototype.saveNet = function(path){
 		for(var i = 0; i < stateArray.length; i++){
 			var liveMons = 0;
 			var enemyMons = 0;
-			for(var Poke in endState.sides[mySID].pokemon){
-				if(endState.sides[mySID].pokemon[Poke].hp > 0){
+			for(var Poke in stateArray[i].sides[mySID].pokemon){
+				if(stateArray[i].sides[mySID].pokemon[Poke].hp > 0){
 					liveMons += 1;
 				}
 			}
-			for(var Poke in endState.sides[1-mySID].pokemon){
-				if(endState.sides[1-mySID].pokemon[Poke].hp > 0){
+			for(var Poke in stateArray[i].sides[1-mySID].pokemon){
+				if(stateArray[i].sides[1-mySID].pokemon[Poke].hp > 0){
 					enemyMons += 1;
 				}
 			}

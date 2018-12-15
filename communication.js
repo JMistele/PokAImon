@@ -40,7 +40,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.nextID = '';
 	this.successfulLogin = false;
 	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNetTheLastHope.json', false);
+	this.net = new PokeNet.PokeNet('pokeNetRound10.json', true);
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
