@@ -485,8 +485,8 @@ PokeNet.prototype.saveNet = function(path){
 		// Reward for kills ONLY
 		// Punish for deaths Only
 		for(var i = 0; i < stateArray.length; i++){
-			liveMons = 0;
-			enemyMons = 0;
+			var liveMons = 0;
+			var enemyMons = 0;
 			for(var Poke in endState.sides[mySID].pokemon){
 				if(endState.sides[mySID].pokemon[Poke].hp > 0){
 					liveMons += 1;

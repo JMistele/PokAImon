@@ -40,7 +40,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.nextID = '';
 	this.successfulLogin = false;
 	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNet189PokAILinear8.json', true);
+	this.net = new PokeNet.PokeNet('pokeNetTheLastHope.json', false);
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
@@ -179,7 +179,7 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
 		this.net.learn(room.episode, room.bot.mySID, .001)
-		this.net.saveNet('pokeNetTheLastHope.json');
+		this.net.saveNet('pokeNetTheLastHope2.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -379,7 +379,7 @@ Bot.prototype.processMessage = function(message) {
 					}
 				}
 				if (msg.includes('|win|')) {
-					var logStream = fs.createWriteStream('winlossLinearLR4.txt', {'flags': 'a'});
+					var logStream = fs.createWriteStream('winlossLinearLastHope.txt', {'flags': 'a'});
 					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
 					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
 					if (msg.includes(this.ID)) {
