@@ -748,6 +748,7 @@ You lose!
 
 sadadasdafsad vs. evilrobob
 You lose!
+<<<<<<< HEAD
 
 evilrobob vs. evilroboA
 You lose!
@@ -799,6 +800,7 @@ You win!
 
 evilrobob vs. evilroboA
 You lose!
+<<<<<<< HEAD
 
 evilroboA vs. evilrobob
 You win!
@@ -880,3 +882,7 @@ You lose!
 
 evilroboA vs. evilrobob
 You win!
+=======
+>>>>>>> parent of 45e7c25... GOGO
+=======
+>>>>>>> parent of 3c63320... Reward Function updated

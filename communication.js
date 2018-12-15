@@ -18,7 +18,7 @@ var sockjs = require('sockjs-client-ws');
 //default ID that the bot will use to login
 var ID = require('./userID.js').ID;
 
-var Opp = "evilrobob"
+var Opp = "evilroboa"
 
 var Bot = function(){
 };
@@ -75,7 +75,7 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 };
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID('evilroboA', 'cs221', 'gen7randombattle');
+	this.setID('evilrobob', 'cs221', 'gen7randombattle');
 	console.log(Opp);
 };
 
@@ -398,13 +398,25 @@ Bot.prototype.processMessage = function(message) {
 
 					//on testingmode
 					if (this.onTestingMode) {
-						sleep(15000);
 						this.client.write('|/utm null');
 						this.client.write("|/challenge " + Opp + ", gen7randombattle");
+<<<<<<< HEAD
 						sleep(1000);
+<<<<<<< HEAD
+=======
+						if(this.NOOFROOMS<1){
+						this.client.write('|/utm null');
+						this.client.write("|/challenge " + Opp + ", gen7randombattle");
+>>>>>>> parent of 45e7c25... GOGO
+=======
+						sleep(10000);
+						if(this.NOOFROOMS<1){
+						this.client.write('|/utm null');
+						this.client.write("|/challenge " + Opp + ", gen7randombattle");
+>>>>>>> parent of 3c63320... Reward Function updated
 						this.client.write('|/utm null');
 						this.client.write("|/accept " + Opp);
-
+						}
 						//this.client.write('|/search gen7randombattle');
 					}
 					// TODOJOHN: Send episode to PokeNet
