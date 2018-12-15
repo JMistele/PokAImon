@@ -482,24 +482,29 @@ PokeNet.prototype.saveNet = function(path){
 		var gamma = .95;
 		// Reward for kills ONLY
 		// Punish for deaths Only
-		for(var i = 0; i < stateArray.length; i++){
-			liveMons = 0;
-			enemyMons = 0;
-			for(var Poke in endState.sides[mySID].pokemon){
-				if(endState.sides[mySID].pokemon[Poke].hp > 0){
-					liveMons += 1;
-				}
-			}
-			for(var Poke in endState.sides[1-mySID].pokemon){
-				if(endState.sides[1-mySID].pokemon[Poke].hp > 0){
-					enemyMons += 1;
-				}
-			}
-			var val = (liveMons - enemyMons)/(liveMons + enemyMons);
-			val = (val + 1)/2;
-			rewardArray.push(val);
-		}
 
+		// Endstate score.
+		var endscore = 0
+		var endState = stateArray[stateArray.length - 1];
+		// Score for remaining pokemon
+		for(var Poke in endState.sides[mySID].pokemon){
+			if(endState.sides[mySID].pokemon[Poke].hp > 0){
+				endscore = 1;
+			}
+		}
+		for(var Poke in endState.sides[1-mySID].pokemon){
+			if(endState.sides[1-mySID].pokemon[Poke].hp > 0){
+				endscore = -1;
+			}
+		}
+		endscore *= gamma;
+		rewardArray[stateArray.length - 1] = endscore;
+		for(var i = 1; i < stateArray.length; i++){
+			rewardArray[stateArray.length - i - 1] = rewardArray[stateArray.length - i]*gamma;
+		}
+		for(var i = 0; i < stateArray.length; i++){
+			rewardArray[i] = (rewardArray[i]+1)*.5
+		}
 		console.log(rewardArray);
 		return rewardArray;
 	}

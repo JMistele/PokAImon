@@ -800,6 +800,7 @@ You win!
 
 evilrobob vs. evilroboA
 You lose!
+<<<<<<< HEAD
 
 evilroboA vs. evilrobob
 You win!
@@ -883,3 +884,5 @@ evilroboA vs. evilrobob
 You win!
 =======
 >>>>>>> parent of 45e7c25... GOGO
+=======
+>>>>>>> parent of 3c63320... Reward Function updated
