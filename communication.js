@@ -402,6 +402,12 @@ Bot.prototype.processMessage = function(message) {
 						this.client.write('|/utm null');
 						this.client.write("|/challenge " + Opp + ", gen7randombattle");
 						sleep(1000);
+<<<<<<< HEAD
+=======
+						if(this.NOOFROOMS<1){
+						this.client.write('|/utm null');
+						this.client.write("|/challenge " + Opp + ", gen7randombattle");
+>>>>>>> parent of 45e7c25... GOGO
 						this.client.write('|/utm null');
 						this.client.write("|/accept " + Opp);
 

@@ -19,7 +19,7 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 function PokeNet(netPath, makeNew){
 	this.file = netPath;
-	var inputLayer = new Synaptic.Layer(153);
+	var inputLayer = new Synaptic.Layer(189);
 	var hiddenLayer = new Synaptic.Layer(1);
 	var outputLayer = new Synaptic.Layer(1);
 
@@ -103,7 +103,6 @@ PokeNet.prototype.saveNet = function(path){
 		}
 		phi.push(maxDmgU)
 		//types
-		/*
 		for(var i=0; i<18; i++){
 			if(i==0 && gameState.sides[1-mySID].active[0].types.includes("Grass")){
 				phi.push(1);
@@ -222,7 +221,7 @@ PokeNet.prototype.saveNet = function(path){
 				phi.push(0);
 			}
 		}
-		*/
+
 		var ourActive = gameState.sides[mySID].active[0];
 		var oppActive = gameState.sides[1-mySID].active[0];
 
@@ -461,7 +460,6 @@ PokeNet.prototype.saveNet = function(path){
 					phi.push(0);
 				}
 		}
-		console.log(phi.length);
 		return phi;
 	};
 
