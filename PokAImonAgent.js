@@ -188,6 +188,10 @@ function PokAImonAgent() {
         if(bestAction == null){
             console.log("RETURNED NULL AS BESTACTION ==============");
         }
+        // Epsilon greedy!
+        if(Math.random() > .9 && choices != null){
+        	bestAction = choices[Math.floor(Math.random()*choices.length)];
+        }
         return bestAction;
   }
 	this.assumePokemon = function (pname, plevel, pgender, side) { //maybe add heuristics to predict certain poke's ability, item

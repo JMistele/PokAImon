@@ -400,23 +400,9 @@ Bot.prototype.processMessage = function(message) {
 					if (this.onTestingMode) {
 						this.client.write('|/utm null');
 						this.client.write("|/challenge " + Opp + ", gen7randombattle");
-<<<<<<< HEAD
-						sleep(1000);
-<<<<<<< HEAD
-=======
-						if(this.NOOFROOMS<1){
-						this.client.write('|/utm null');
-						this.client.write("|/challenge " + Opp + ", gen7randombattle");
->>>>>>> parent of 45e7c25... GOGO
-=======
 						sleep(10000);
-						if(this.NOOFROOMS<1){
-						this.client.write('|/utm null');
-						this.client.write("|/challenge " + Opp + ", gen7randombattle");
->>>>>>> parent of 3c63320... Reward Function updated
 						this.client.write('|/utm null');
 						this.client.write("|/accept " + Opp);
-						}
 						//this.client.write('|/search gen7randombattle');
 					}
 					// TODOJOHN: Send episode to PokeNet
