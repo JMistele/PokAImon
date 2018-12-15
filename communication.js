@@ -398,6 +398,7 @@ Bot.prototype.processMessage = function(message) {
 
 					//on testingmode
 					if (this.onTestingMode) {
+						sleep(1000);
 						this.client.write('|/utm null');
 						this.client.write("|/challenge " + Opp + ", gen7randombattle");
 						sleep(10000);
