@@ -400,7 +400,7 @@ Bot.prototype.processMessage = function(message) {
 					if (this.onTestingMode) {
 						this.client.write('|/utm null');
 						this.client.write("|/challenge " + Opp + ", gen7randombattle");
-						sleep(1000);
+						sleep(10000);
 						if(this.NOOFROOMS<1){
 						this.client.write('|/utm null');
 						this.client.write("|/challenge " + Opp + ", gen7randombattle");
