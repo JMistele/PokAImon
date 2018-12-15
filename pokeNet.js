@@ -19,7 +19,7 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 function PokeNet(netPath, makeNew){
 	this.file = netPath;
-	var inputLayer = new Synaptic.Layer(189);
+	var inputLayer = new Synaptic.Layer(153);
 	var hiddenLayer = new Synaptic.Layer(1);
 	var outputLayer = new Synaptic.Layer(1);
 
@@ -485,16 +485,16 @@ PokeNet.prototype.saveNet = function(path){
 		// Reward for kills ONLY
 		// Punish for deaths Only
 		for(var i = 0; i < stateArray.length; i++){
-			var liveMons = 0;
-			var enemyMons = 0;
+			var liveMons = 6;
+			var enemyMons = 6;
 			for(var Poke in stateArray[i].sides[mySID].pokemon){
-				if(stateArray[i].sides[mySID].pokemon[Poke].hp > 0){
-					liveMons += 1;
+				if(stateArray[i].sides[mySID].pokemon[Poke].hp <= 0){
+					liveMons -= 1;
 				}
 			}
 			for(var Poke in stateArray[i].sides[1-mySID].pokemon){
-				if(stateArray[i].sides[1-mySID].pokemon[Poke].hp > 0){
-					enemyMons += 1;
+				if(stateArray[i].sides[1-mySID].pokemon[Poke].hp <= 0){
+					enemyMons -= 1;
 				}
 			}
 			var val = (liveMons - enemyMons)/(liveMons + enemyMons);
