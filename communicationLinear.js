@@ -4,7 +4,7 @@ var util = require('./util');
 var CynthiAgent = require('./cynthiagent.js').CynthiAgent;
 var PokAImonAgent = require('./pokaimonagent.js').PokAImonAgent;
 var Perspective = require('./interfacelayer.js').InterfaceLayer;
-var PokeNet = require('./pokeNetNeural.js');
+var PokeNet = require('./pokeNetLinear.js');
 //helper functions
 global.Tools = require('./zarel/tools.js').includeMods();
 var ExtraTools = require('./database/tools.js');
@@ -40,7 +40,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.nextID = '';
 	this.successfulLogin = false;
 	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNetNeural.json', false);
+	this.net = new PokeNet.PokeNet('pokeNetLinear.json', false);
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
@@ -179,7 +179,7 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
 		this.net.learn(room.episode, room.bot.mySID, .001)
-		this.net.saveNet('pokeNetNeural.json');
+		this.net.saveNet('pokeNetLinear.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -379,7 +379,7 @@ Bot.prototype.processMessage = function(message) {
 					}
 				}
 				if (msg.includes('|win|')) {
-					var logStream = fs.createWriteStream('winlossNeural.txt', {'flags': 'a'});
+					var logStream = fs.createWriteStream('winlossLinear.txt', {'flags': 'a'});
 					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
 					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
 					if (msg.includes(this.ID)) {
