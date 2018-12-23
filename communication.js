@@ -292,30 +292,7 @@ Bot.prototype.processMessage = function(message) {
 			}
 
 			else {
-				if (msg.includes('|win|')) {
-					var logStream = fs.createWriteStream('winloss.txt', {'flags': 'a'});
-					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
-					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
-					if (msg.includes(this.ID)) {
-						logStream.write('You win!\n');
-
-					}
-					else {
-						logStream.write('You lose!\n');
-					}
-					logStream.end('')
-
-					this.client.write('|/leave ' + roomtitle);
-					this.removeRoom(roomtitle);
-
-					//on testingmode
-					if (this.onTestingMode) {
-						this.client.write('|/utm null');
-						this.client.write('|/search gen7randombattle');
-					}
-
-				}
-				else if (msg.includes('|l|') || msg.includes('|leave|')) {
+				if (msg.includes('|l|') || msg.includes('|leave|')) {
 					this.client.write(roomtitle+'|/timer on')
 				}
 				else {
@@ -365,6 +342,7 @@ Bot.prototype.processMessage = function(message) {
 					}
 					if (msg.indexOf('|turn|') > -1 ) {
 						var move;
+						//TODO: Write gameState to episode textfile
 						if (bot.battle.sides[bot.mySID] !== null) {
 							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], false); //activate CynthiAgent
 						}
@@ -388,7 +366,7 @@ Bot.prototype.processMessage = function(message) {
 						logStream.write('You lose!\n');
 					}
 					logStream.end('')
-					//Add gameState to room episode
+					//TODO: Write gameState to episode textfile
 					var newState = this.ROOMS[roomtitle].bot.battle.copy();
 					this.ROOMS[roomtitle].episode.push(newState);
 					this.client.write('|/leave ' + roomtitle);
