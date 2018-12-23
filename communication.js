@@ -42,7 +42,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.nextID = '';
 	this.successfulLogin = false;
 	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNetTD205-6.json', false);
+	//this.net = new PokeNet.PokeNet('pokeNetTD205-6.json', false);
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
@@ -179,9 +179,9 @@ Bot.prototype.addRoom = function(roomtitle, botvsuser) {
 Bot.prototype.removeRoom = function(rmnumber) {
 	var room = this.ROOMS[rmnumber];
 	if(room) {
-		//TODO: .7 is a magic number for learning rate smh
-		this.net.learn(room.episode, room.bot.mySID, .01)
-		this.net.saveNet('pokeNetTD205-7.json');
+		//TODO: Change learning to recording
+		//this.net.learn(room.episode, room.bot.mySID, .01)
+		//this.net.saveNet('pokeNetTD205-7.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -385,7 +385,7 @@ Bot.prototype.processMessage = function(message) {
 					}
 				}
 				if (msg.includes('|win|')) {
-					var logStream = fs.createWriteStream('winlossTD205.txt', {'flags': 'a'});
+					var logStream = fs.createWriteStream('winloss.txt', {'flags': 'a'});
 					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
 					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
 					if (msg.includes(this.ID)) {
@@ -425,8 +425,8 @@ var Room = function(roomtitle, botvsuser, userID) {
 	this.roomNumber = roomParts[2];
 	this.battleType = roomParts[1];
 	this.cynthiagent = new CynthiAgent();
-	this.pokaimonagent = new PokAImonAgent();
-	this.bot = new Perspective('Local room', userID, null, this.pokaimonagent);
+	//this.pokaimonagent = new PokAImonAgent();
+	this.bot = new Perspective('Local room', userID, null, this.cynthiagent);
 	this.forceSwitch = false;
 	this.episode = [];
 };
