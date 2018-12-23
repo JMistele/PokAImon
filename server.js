@@ -1,45 +1,9 @@
 //just gon try some bullshit
 
 var communication = require('./communication');
-/*
-var communication2 = require('./communication2');
-var communication3 = require('./communication3');
-var communication4 = require('./communication4');
-var communication5 = require('./communication5');
-var communication6 = require('./communication6');
-var communication7 = require('./communication7');
-var communication8 = require('./communication8');
-var communication9 = require('./communication9');
-\*/
-//var communication10 = require('./communication10');
-var bot0 = new communication.Bot();
-//var bot10 = new communication.Bot();
-/*
-var bot1 = new communication10.Bot();
-var bot2 = new communication2.Bot();
-var bot3 = new communication3.Bot();
-var bot4 = new communication4.Bot();
-var bot5 = new communication5.Bot();
-var bot6 = new communication6.Bot();
-var bot7 = new communication7.Bot();
-var bot8 = new communication8.Bot();
-var bot9 = new communication9.Bot();
-*/
+var bot = new communication.Bot();
 
-bot0.initializeBot();
-//bot10.initializeBot();
-/*
-bot1.initializeBot();
-bot2.initializeBot();
-bot3.initializeBot();
-bot4.initializeBot();
-bot5.initializeBot();
-bot6.initializeBot();
-bot7.initializeBot();
-bot8.initializeBot();
-bot9.initializeBot();
-
-*/
+bot.initializeBot();
 
 /*
 //create server
