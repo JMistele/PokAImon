@@ -19,8 +19,8 @@ var MoveSets = require('./zarel/data/formats-data.js').BattleFormatsData;
 
 function PokeNet(netPath, makeNew){
 	this.file = netPath;
-	var inputLayer = new Synaptic.Layer(153);
-	var hiddenLayer = new Synaptic.Layer(1);
+	var inputLayer = new Synaptic.Layer(205);
+	var hiddenLayer = new Synaptic.Layer(30);
 	var outputLayer = new Synaptic.Layer(1);
 
 	inputLayer.project(hiddenLayer);
@@ -103,7 +103,7 @@ PokeNet.prototype.saveNet = function(path){
 		}
 		phi.push(maxDmgU)
 		//types
-		/*
+		
 		for(var i=0; i<18; i++){
 			if(i==0 && gameState.sides[1-mySID].active[0].types.includes("Grass")){
 				phi.push(1);
@@ -222,7 +222,7 @@ PokeNet.prototype.saveNet = function(path){
 				phi.push(0);
 			}
 		}
-		*/
+		
 		var ourActive = gameState.sides[mySID].active[0];
 		var oppActive = gameState.sides[1-mySID].active[0];
 
@@ -290,6 +290,92 @@ PokeNet.prototype.saveNet = function(path){
 				phi.push(poke[i].baseStats.spa/200);
 				phi.push(poke[i].baseStats.spd/200);
 				phi.push(poke[i].baseStats.spe/200);
+			}
+		}
+// volatiles 8
+		if(ourActive.volatiles['encore']){
+			phi.push(1);
+		} else {
+			phi.push(0);
+		}
+		if(ourActive.volatiles['substitute']){
+			phi.push(1);
+		} else {
+			phi.push(0);
+		}
+		if(ourActive.volatiles['taunt']){
+			phi.push(1);
+		} else {
+			phi.push(0);
+		}
+		if(ourActive.volatiles['leechseed']){
+			phi.push(1);
+		} else {
+			phi.push(0);
+		}
+		if(oppActive.volatiles['encore']){
+			phi.push(1);
+		} else {
+			phi.push(0);
+		}
+		if(oppActive.volatiles['substitute']){
+			phi.push(1);
+		} else {
+			phi.push(0);
+		}
+		if(oppActive.volatiles['taunt']){
+			phi.push(1);
+		} else {
+			phi.push(0);
+		}
+		if(oppActive.volatiles['leechseed']){
+			phi.push(1);
+		} else {
+			phi.push(0);
+		}
+// Entry Hazards 2
+		if(gameState.sides[mySID].sideConditions) {
+			if(gameState.sides[mySID].sideConditions['stealthrock']){
+				phi.push(1);
+			} else{
+				phi.push(0);
+			}
+			if(gameState.sides[mySID].sideConditions['stickyweb']){
+				phi.push(1);
+			} else{
+				phi.push(0);
+			}
+			if(gameState.sides[mySID].sideConditions['spikes']){
+				phi.push(1);
+			} else{
+				phi.push(0);
+			}
+			if(gameState.sides[mySID].sideConditions['toxicspikes']){
+				phi.push(1);
+			} else{
+				phi.push(0);
+			}
+		}
+		if(gameState.sides[1-mySID].sideConditions) {
+			if(gameState.sides[1-mySID].sideConditions['stealthrock']){
+				phi.push(1);
+			} else{
+				phi.push(0);
+			}
+			if(gameState.sides[1-mySID].sideConditions['stickyweb']){
+				phi.push(1);
+			} else{
+				phi.push(0);
+			}
+			if(gameState.sides[1-mySID].sideConditions['spikes']){
+				phi.push(1);
+			} else{
+				phi.push(0);
+			}
+			if(gameState.sides[1-mySID].sideConditions['toxicspikes']){
+				phi.push(1);
+			} else{
+				phi.push(0);
 			}
 		}
 
@@ -461,12 +547,11 @@ PokeNet.prototype.saveNet = function(path){
 					phi.push(0);
 				}
 		}
-		console.log(phi.length)
 		return phi;
 	};
 
 	PokeNet.prototype.learn = function(stateArray, mySID, learningRate){
-		var rewardArray = this.reward(stateArray, mySID);
+		var rewardArray = this.rewardTD(stateArray, mySID);
 		for(var i = 0; i < stateArray.length; i++){
 			//console.log(this.net);
 			var vecta = this.featurizeState(stateArray[i], mySID)
@@ -505,6 +590,26 @@ PokeNet.prototype.saveNet = function(path){
 		return rewardArray;
 	}
 
+	PokeNet.prototype.rewardTD  = function(stateArray, mySID){
+		var rewardArray = [];
+		var gamma = .95
+		for(var i = 0; i < stateArray.length - 1; i++){
+			rewardArray.push(.5 + gamma*(this.evaluate(stateArray[i+1], mySID) - .5))
+		}
+		var enemyMons = 0;
+		for(var Poke in stateArray[i].sides[1-mySID].pokemon){
+			if(stateArray[i].sides[1-mySID].pokemon[Poke].hp <= 0){
+				enemyMons -= 1;
+			}
+		}
+		if(enemyMons > 0) {
+			rewardArray.push(0);
+		} else {
+			rewardArray.push(1);
+		}
+		return rewardArray;
+	}
+
 
 	PokeNet.prototype.evaluate = function(gameState, mySID){
 		if(gameState == null) {
@@ -513,7 +618,7 @@ PokeNet.prototype.saveNet = function(path){
 		}
 		var vecta = this.featurizeState(gameState, mySID);
 		for(var i=0; i<vecta.length; i++){
-			if(vecta[i]==null || typeof vecta[i] === 'undefined'){
+			if(vecta[i]==null || typeof vecta[i] === 'undefined' || isNaN(vecta[i])){
 					console.log("FEATURE VECTOR MACHINE BROKE ===========")
 					return 0;
 			}

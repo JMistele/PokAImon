@@ -18,7 +18,9 @@ var sockjs = require('sockjs-client-ws');
 //default ID that the bot will use to login
 var ID = require('./userID.js').ID;
 
-var Opp = "evilroboa"
+var battlesFinished = 0;
+
+var Opp = "snapbak"
 
 var Bot = function(){
 };
@@ -40,7 +42,7 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	this.nextID = '';
 	this.successfulLogin = false;
 	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNetRound10.json', true);
+	this.net = new PokeNet.PokeNet('pokeNetTD205-6.json', false);
 	//create Server
 	this.createShowdownServer();
 	//this.net.saveNet('pokeNet.json');
@@ -75,7 +77,7 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 };
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID('evilrobob', 'cs221', 'gen7randombattle');
+	this.setID('evilroboA', 'cs221', 'gen7randombattle');
 	console.log(Opp);
 };
 
@@ -178,11 +180,15 @@ Bot.prototype.removeRoom = function(rmnumber) {
 	var room = this.ROOMS[rmnumber];
 	if(room) {
 		//TODO: .7 is a magic number for learning rate smh
-		this.net.learn(room.episode, room.bot.mySID, .001)
-		this.net.saveNet('pokeNetTheLastHope2.json');
+		this.net.learn(room.episode, room.bot.mySID, .01)
+		this.net.saveNet('pokeNetTD205-7.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
+		battlesFinished += 1;
+		if(battlesFinished > 31){
+			throw "Done!";
+		}
 	}
 	return false;
 };
@@ -301,10 +307,10 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 1) {
-						//this.startRandomBattle();
-						this.client.write("|/challenge " + Opp + ", gen7randombattle");
-						this.client.write(roomtitle+"|/accept");
+					if (this.NOOFROOMS < 20) {
+						this.startRandomBattle();
+						//this.client.write("|/challenge gen7randombattle");
+						//this.client.write(roomtitle+"|/accept");
 					}
 				}
 			}
@@ -379,7 +385,7 @@ Bot.prototype.processMessage = function(message) {
 					}
 				}
 				if (msg.includes('|win|')) {
-					var logStream = fs.createWriteStream('winlossLinearLastHope.txt', {'flags': 'a'});
+					var logStream = fs.createWriteStream('winlossTD205.txt', {'flags': 'a'});
 					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
 					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
 					if (msg.includes(this.ID)) {
@@ -398,13 +404,10 @@ Bot.prototype.processMessage = function(message) {
 
 					//on testingmode
 					if (this.onTestingMode) {
-						sleep(1000);
+						//sleep(2000);
 						this.client.write('|/utm null');
-						this.client.write("|/challenge " + Opp + ", gen7randombattle");
-						sleep(10000);
-						this.client.write('|/utm null');
-						this.client.write("|/accept " + Opp);
-						//this.client.write('|/search gen7randombattle');
+						//this.client.write("|/accept " + Opp);
+						this.client.write('|/search gen7randombattle');
 					}
 					// TODOJOHN: Send episode to PokeNet
 

@@ -86,26 +86,6 @@ function PokAImonAgent() {
 	}
 
 	this.decide = function (gameState, options, mySide, forceSwitch, myNet) {
-				var fakePhi = [];
-				for(var i = 0; i < 189; i++){
-					fakePhi.push(1);
-				}
-				console.log(myNet.net.activate(fakePhi));
-				var fakePhi = [];
-				for(var i = 0; i < 189; i++){
-					fakePhi.push(500);
-				}
-				console.log(myNet.net.activate(fakePhi));
-				var fakePhi = [];
-				for(var i = 0; i < 189; i++){
-					fakePhi.push(.1);
-				}
-				console.log(myNet.net.activate(fakePhi));
-				var fakePhi = [];
-				for(var i = 0; i < 189; i++){
-					fakePhi.push(-1);
-				}
-				console.log(myNet.net.activate(fakePhi));
         var mySID = mySide.n;
         console.log('My SID');
         console.log(mySID);
