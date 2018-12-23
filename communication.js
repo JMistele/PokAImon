@@ -2,9 +2,7 @@ var request = require('request');
 var util = require('./util');
 // gamestate simulation
 var CynthiAgent = require('./cynthiagent.js').CynthiAgent;
-var PokAImonAgent = require('./pokaimonagent.js').PokAImonAgent;
 var Perspective = require('./interfacelayer.js').InterfaceLayer;
-var PokeNet = require('./pokeNetNeural.js');
 //helper functions
 global.Tools = require('./zarel/tools.js').includeMods();
 var ExtraTools = require('./database/tools.js');
@@ -17,8 +15,6 @@ var sockjs = require('sockjs-client-ws');
 
 //default ID that the bot will use to login
 var ID = require('./userID.js').ID;
-
-var Opp = "evilroboa"
 
 var Bot = function(){
 };
@@ -39,21 +35,9 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	//check for successful login
 	this.nextID = '';
 	this.successfulLogin = false;
-	//Initialize Neural Net
-	this.net = new PokeNet.PokeNet('pokeNetNeural.json', false);
 	//create Server
 	this.createShowdownServer();
-	//this.net.saveNet('pokeNet.json');
-
 };
-
-Bot.prototype.saveNet = function(path) {
-	this.net.saveNet(path);
-}
-
-Bot.prototype.setNet = function(path) {
-	this.net = new PokeNet(path);
-}
 
 Bot.prototype.setID = function(userID, password, battleFormat) {
 	this.battleFormat = battleFormat;
@@ -73,10 +57,10 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 		this.login();
 	}
 };
+
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID('evilrobob', 'cs221', 'gen7randombattle');
-	console.log(Opp);
+	this.setID('greedybaseline', 'cs221', 'gen7randombattle');
 };
 
 Bot.prototype.createShowdownServer = function() {
@@ -177,9 +161,6 @@ Bot.prototype.addRoom = function(roomtitle, botvsuser) {
 Bot.prototype.removeRoom = function(rmnumber) {
 	var room = this.ROOMS[rmnumber];
 	if(room) {
-		//TODO: .7 is a magic number for learning rate smh
-		this.net.learn(room.episode, room.bot.mySID, .001)
-		this.net.saveNet('pokeNetNeural.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
@@ -195,15 +176,6 @@ function forceSwitchCheck(message) {
 		}
 	}
 	return false;
-}
-
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
 }
 
 Bot.prototype.processMessage = function(message) {
@@ -256,13 +228,9 @@ Bot.prototype.processMessage = function(message) {
 			}
 		}
 
-		else if (parts[0].includes("updatechallenges")) { //acepting challenges from others
-			var challengesFrom = JSON.parse(parts[1]).challengesFrom;
-			console.log("huh");
+		else if (msg.includes("updatechallenges")) { //acepting challenges from others
+			var challenge = JSON.parse(parts[1]);
 			//turn off auto accepting challenge for now
-			if(typeof challengesFrom !== 'undefined'){
-				this.client.write("|/accept " + Opp);
-			}
 			/**
 			if (challenge.challengesFrom != null) {
 				var challengeobj = Object.keys(challenge.challengesFrom);
@@ -285,8 +253,8 @@ Bot.prototype.processMessage = function(message) {
 					this.client.write('|/reject ' + challenger);
 				}
 			}
-			**/
 
+			**/
 		}
 
 		if (parts[0].includes("battle")) {
@@ -301,17 +269,37 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 1) {
-						//this.startRandomBattle();
-						this.client.write("|/challenge " + Opp + ", gen7randombattle");
-						this.client.write(roomtitle+"|/accept");
+					if (this.NOOFROOMS < 4) {
+						this.startRandomBattle();
 					}
 				}
 			}
 
 			else {
+				if (msg.includes('|win|')) {
+					var logStream = fs.createWriteStream('winloss.txt', {'flags': 'a'});
+					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
+					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
+					if (msg.includes(this.ID)) {
+						logStream.write('You win!\n');
 
-				if (msg.includes('|l|') || msg.includes('|leave|')) {
+					}
+					else {
+						logStream.write('You lose!\n');
+					}
+					logStream.end('')
+
+					this.client.write('|/leave ' + roomtitle);
+					this.removeRoom(roomtitle);
+
+					//on testingmode
+					if (this.onTestingMode) {
+						this.client.write('|/utm null');
+						this.client.write('|/search gen7randombattle');
+					}
+
+				}
+				else if (msg.includes('|l|') || msg.includes('|leave|')) {
 					this.client.write(roomtitle+'|/timer on')
 				}
 				else {
@@ -341,7 +329,7 @@ Bot.prototype.processMessage = function(message) {
 					//TODO: there is also [invalid choice]: Can't switch.
 						if (parts[2].indexOf('a switch response') >-1 || parts[2].indexOf('switch to a fainted')>-1) { //need switch
 							if (bot.battle.sides[bot.mySID] !== null) {
-								let move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], true, this.net); //activate CynthiAgent
+								let move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], true); //activate CynthiAgent
 								this.client.send(roomtitle+"|/"+move);
 							}
 						}
@@ -350,7 +338,7 @@ Bot.prototype.processMessage = function(message) {
 						this.ROOMS[roomtitle].forceSwitch = false;
 						var move;
 						if (bot.battle.sides[bot.mySID] !== null) {
-							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], true, this.net); //activate CynthiAgent
+							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], true); //activate CynthiAgent
 						}
 						if (move) {//in case action is undefined, this will be an error, therefore the condition
 							this.client.send(roomtitle + '|/' + move);
@@ -360,13 +348,9 @@ Bot.prototype.processMessage = function(message) {
 						}
 					}
 					if (msg.indexOf('|turn|') > -1 ) {
-						//Add gameState to room episode
-						var newState = bot.battle.copy();
-
-						this.ROOMS[roomtitle].episode.push(newState);
 						var move;
 						if (bot.battle.sides[bot.mySID] !== null) {
-							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], false, this.net); //activate CynthiAgent
+							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], false); //activate CynthiAgent
 						}
 						if (move) {//in case action is undefined, this will be an error, therefore the condition
 							this.client.send(roomtitle + '|/' + move);
@@ -374,40 +358,7 @@ Bot.prototype.processMessage = function(message) {
 						else {
 							this.client.send(roomtitle + '|/move');
 						}
-
-
 					}
-				}
-				if (msg.includes('|win|')) {
-					var logStream = fs.createWriteStream('winlossNeural.txt', {'flags': 'a'});
-					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
-					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
-					if (msg.includes(this.ID)) {
-						logStream.write('You win!\n');
-
-					}
-					else {
-						logStream.write('You lose!\n');
-					}
-					logStream.end('')
-					//Add gameState to room episode
-					var newState = this.ROOMS[roomtitle].bot.battle.copy();
-					this.ROOMS[roomtitle].episode.push(newState);
-					this.client.write('|/leave ' + roomtitle);
-					this.removeRoom(roomtitle);
-
-					//on testingmode
-					if (this.onTestingMode) {
-						sleep(1000);
-						this.client.write('|/utm null');
-						this.client.write("|/challenge " + Opp + ", gen7randombattle");
-						sleep(10000);
-						this.client.write('|/utm null');
-						this.client.write("|/accept " + Opp);
-						//this.client.write('|/search gen7randombattle');
-					}
-					// TODOJOHN: Send episode to PokeNet
-
 				}
 			}
 		}
@@ -422,8 +373,6 @@ var Room = function(roomtitle, botvsuser, userID) {
 	this.roomNumber = roomParts[2];
 	this.battleType = roomParts[1];
 	this.cynthiagent = new CynthiAgent();
-	this.pokaimonagent = new PokAImonAgent();
-	this.bot = new Perspective('Local room', userID, null, this.pokaimonagent);
+	this.bot = new Perspective('Local room', userID, null, this.cynthiagent);
 	this.forceSwitch = false;
-	this.episode = [];
 };
