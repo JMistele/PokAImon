@@ -16,6 +16,10 @@ var sockjs = require('sockjs-client-ws');
 //default ID that the bot will use to login
 var ID = require('./userID.js').ID;
 
+var battlesFinished = 0;
+
+var Opp = "snapbak"
+
 var Bot = function(){
 };
 
@@ -35,6 +39,8 @@ Bot.prototype.initializeBot = function(userID, password, battleFormat) {
 	//check for successful login
 	this.nextID = '';
 	this.successfulLogin = false;
+	//Initialize Neural Net
+	//this.net = new PokeNet.PokeNet('pokeNetTD205-6.json', false);
 	//create Server
 	this.createShowdownServer();
 };
@@ -60,7 +66,8 @@ Bot.prototype.setID = function(userID, password, battleFormat) {
 
 //reserved for testing the performance of the bot
 Bot.prototype.startTesting = function() {
-	this.setID('greedybaseline', 'cs221', 'gen7randombattle');
+	this.setID('evilroboA', 'cs221', 'gen7randombattle');
+	console.log(Opp);
 };
 
 Bot.prototype.createShowdownServer = function() {
@@ -161,9 +168,16 @@ Bot.prototype.addRoom = function(roomtitle, botvsuser) {
 Bot.prototype.removeRoom = function(rmnumber) {
 	var room = this.ROOMS[rmnumber];
 	if(room) {
+		//TODO: Change learning to recording
+		//this.net.learn(room.episode, room.bot.mySID, .01)
+		//this.net.saveNet('pokeNetTD205-7.json');
 		delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
+		battlesFinished += 1;
+		if(battlesFinished > 31){
+			throw "Done!";
+		}
 	}
 	return false;
 };
@@ -269,8 +283,10 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 4) {
+					if (this.NOOFROOMS < 20) {
 						this.startRandomBattle();
+						//this.client.write("|/challenge gen7randombattle");
+						//this.client.write(roomtitle+"|/accept");
 					}
 				}
 			}
@@ -360,6 +376,32 @@ Bot.prototype.processMessage = function(message) {
 						}
 					}
 				}
+				if (msg.includes('|win|')) {
+					var logStream = fs.createWriteStream('winloss.txt', {'flags': 'a'});
+					// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
+					logStream.write('\n'+ this.ROOMS[roomtitle].botvsuser);
+					if (msg.includes(this.ID)) {
+						logStream.write('You win!\n');
+
+					}
+					else {
+						logStream.write('You lose!\n');
+					}
+					logStream.end('')
+					//Add gameState to room episode
+					var newState = this.ROOMS[roomtitle].bot.battle.copy();
+					this.ROOMS[roomtitle].episode.push(newState);
+					this.client.write('|/leave ' + roomtitle);
+					this.removeRoom(roomtitle);
+
+					//on testingmode
+					if (this.onTestingMode) {
+						//sleep(2000);
+						this.client.write('|/utm null');
+						//this.client.write("|/accept " + Opp);
+						this.client.write('|/search gen7randombattle');
+					}
+				}
 			}
 		}
 };
@@ -373,6 +415,7 @@ var Room = function(roomtitle, botvsuser, userID) {
 	this.roomNumber = roomParts[2];
 	this.battleType = roomParts[1];
 	this.cynthiagent = new CynthiAgent();
+	//this.pokaimonagent = new PokAImonAgent();
 	this.bot = new Perspective('Local room', userID, null, this.cynthiagent);
 	this.forceSwitch = false;
 };
