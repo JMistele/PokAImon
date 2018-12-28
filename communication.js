@@ -165,19 +165,42 @@ Bot.prototype.addRoom = function(roomtitle, botvsuser) {
 	this.NOOFROOMS += 1;
 };
 
+function saveEpisode(episode, mySID, filePath){
+	//Inefficient, but javascript async issues must be dodged.
+	var episodeCopy = [];
+	for(var i = 0; i < episode.length; i++){
+		episodeCopy.push(episode[i].copy());
+	}
+	var episodeStream = fs.createWriteStream(filePath, {'flags': 'a'});
+	// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
+	episodeStream.write('mySID: ' + mySID);
+	if(episode){
+		console.log('Episode is alive?');
+	}
+	
+	for(var i = 0; i < episodeCopy.length; i++){
+		console.log(episode[i]);
+				console.log('Episode is alive?');
+
+		episodeStream.write('\n'+ JSON.stringify(episode[i]));
+	}
+	episodeStream.write('\n\nEND');
+	episodeStream.end('');
+	return true;
+}
+
 Bot.prototype.removeRoom = function(rmnumber) {
 	var room = this.ROOMS[rmnumber];
 	if(room) {
 		//TODO: Change learning to recording
 		//this.net.learn(room.episode, room.bot.mySID, .01)
 		//this.net.saveNet('pokeNetTD205-7.json');
-		delete this.ROOMS[rmnumber];
+		var filePath = 'testFile' + rmnumber.toString() + '.txt';
+		console.log(room.episode);
+		saveEpisode(room.episode, room.bot.mySID, filePath);
+		//delete this.ROOMS[rmnumber];
 		return true;
 		Bot.NOOFROOMS -= 1;
-		battlesFinished += 1;
-		if(battlesFinished > 31){
-			throw "Done!";
-		}
 	}
 	return false;
 };
@@ -283,7 +306,7 @@ Bot.prototype.processMessage = function(message) {
 				}
 				//for testing -- to speed up testing
 				if (this.onTestingMode) {
-					if (this.NOOFROOMS < 20) {
+					if (this.NOOFROOMS < 1) {
 						this.startRandomBattle();
 						//this.client.write("|/challenge gen7randombattle");
 						//this.client.write(roomtitle+"|/accept");
@@ -342,6 +365,7 @@ Bot.prototype.processMessage = function(message) {
 					}
 					if (msg.indexOf('|turn|') > -1 ) {
 						var move;
+						this.ROOMS[roomtitle].episode.push(bot.battle.copy());
 						//TODO: Write gameState to episode textfile
 						if (bot.battle.sides[bot.mySID] !== null) {
 							move = bot.agent.decide(bot.battle, bot.cTurnOptions, bot.battle.sides[bot.mySID], false); //activate CynthiAgent
@@ -392,6 +416,7 @@ var Room = function(roomtitle, botvsuser, userID) {
 	this.room = roomtitle;
 	this.roomNumber = roomParts[2];
 	this.battleType = roomParts[1];
+	this.episode = [];
 	this.cynthiagent = new CynthiAgent();
 	//this.pokaimonagent = new PokAImonAgent();
 	this.bot = new Perspective('Local room', userID, null, this.cynthiagent);
