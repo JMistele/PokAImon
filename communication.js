@@ -9,6 +9,7 @@ var ExtraTools = require('./database/tools.js');
 
 //logging
 var fs = require('fs');
+const {parse, stringify} = require('flatted/cjs');
 
 // required connect to server
 var sockjs = require('sockjs-client-ws');
@@ -171,21 +172,20 @@ function saveEpisode(episode, mySID, filePath){
 	for(var i = 0; i < episode.length; i++){
 		episodeCopy.push(episode[i].copy());
 	}
-	var episodeStream = fs.createWriteStream(filePath, {'flags': 'a'});
+	var episodeStream = fs.createWriteStream('gamedata\\' + filePath, {'flags': 'a'});
 	// use {'flags': 'a'} to append and {'flags': 'w'} to erase and write a new file
 	episodeStream.write('mySID: ' + mySID);
-	if(episode){
-		console.log('Episode is alive?');
-	}
 	
 	for(var i = 0; i < episodeCopy.length; i++){
 		console.log(episode[i]);
-				console.log('Episode is alive?');
-
-		episodeStream.write('\n'+ JSON.stringify(episode[i]));
+		console.log('Episode is alive!');
+		episodeStream.write('\n'+ stringify(episode[i]));
 	}
 	episodeStream.write('\n\nEND');
 	episodeStream.end('');
+	var registryStream = fs.createWriteStream('gamedata\\' + 'registryTest.txt', {'flags': 'a'});
+	registryStream.write(filePath + '\n');
+	registryStream.end('');
 	return true;
 }
 
