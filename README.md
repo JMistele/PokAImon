@@ -1,7 +1,9 @@
 # PokAImon
 Pokemon Showdown Bot
 
-Closely based on the CynthiAI bot and using much of their code.
+Uses TD Learning to train a neural net to score the relative likelihood of winning a Pokemon battle given the current game state. With this, a min-max based decision system determines the move that maximizes this score in the next turn.
+
+Uses CynthiAI's infrastructure to communicate with the Pokemon Showdown website.
 CynthiAI can be found here: https://github.com/Sisyphus25/CynthiAI
 
 # CynthiAI
